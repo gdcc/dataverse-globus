@@ -18,6 +18,9 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatListModule} from '@angular/material/list';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatInput} from '@angular/material/input';
+import {CdkFixedSizeVirtualScroll, CdkVirtualScrollViewport} from '@angular/cdk/scrolling';
+import {SelFilesType} from '../navigate-template/navigate-template.component';
 
 export interface PassingDataSelectType {
   dataTransfer: TransferData;
@@ -28,20 +31,23 @@ export interface PassingDataSelectType {
 @Component({
   selector: 'app-navigate-template-download',
   standalone: true,
-  imports: [
-    TranslateModule,
-    MatToolbarModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    NgIf,
-    ReactiveFormsModule,
-    NgForOf,
-    MatGridListModule,
-    MatIconModule,
-    MatCheckboxModule,
-    MatListModule,
-    FormsModule
-  ],
+    imports: [
+        TranslateModule,
+        MatToolbarModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        NgIf,
+        ReactiveFormsModule,
+        NgForOf,
+        MatGridListModule,
+        MatIconModule,
+        MatCheckboxModule,
+        MatListModule,
+        FormsModule,
+        MatInput,
+        CdkFixedSizeVirtualScroll,
+        CdkVirtualScrollViewport
+    ],
   templateUrl: './navigate-template-download.component.html',
   styleUrls: ['./navigate-template-download.component.css']
 })
@@ -126,12 +132,17 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   findDirectories(data) {
     this.selectedDirectory = data['path'];
     console.log(this.transferData.siteUrl);
+    let urlPath = '';
     if (this.type !== 2) {
-    const url = this.transferData.siteUrl + '/api/datasets/' + this.transferData.datasetId + '/versions/' +
-        this.transferData.datasetVersion + '/files';
-    console.log(url);
-    return this.globusService
-        .getDataverse(url, this.transferData.key);
+      for (const urlObject of this.transferData.signedUrls) {
+        // console.log(urlObject);
+        if (urlObject['name'] === 'getFileListing') {
+          urlPath = urlObject['signedUrl'];
+          break;
+        }
+      }
+      console.log(urlPath);
+      return this.globusService.getDataverse(urlPath, null);
     } else {
       return of();
     }
@@ -149,6 +160,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
 
   }
   processDirectories(data) {
+    console.log(data);
     if (this.type !== 2) {
       console.log(data.data);
       this.files = new Array<string>();
@@ -218,8 +230,12 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
     }
   }
 
+
+
   selectAll($event, directory) {
     this.checkFlag = false;
+    console.log($event);
+    console.log(directory);
     if ($event.checked) {
       for (const obj of this.personalDirectories) {
         this.selectedOptions.push(obj);
@@ -237,7 +253,22 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
       this.checkFlag = true;
       directory.writeValue(this.personalDirectories);
     } else {
+      console.log("Deselecting");
       this.checkFlag = false;
+      for (const obj of this.personalDirectories) {
+
+        const file: SelFilesType = {fileNameObject: obj, directory: this.selectedDirectory};
+        console.log(this.selectedFiles);
+        console.log(file.fileNameObject);
+        const indx = this.selectedFiles.findIndex(x =>
+            x['name'] === file.fileNameObject['name']
+        );
+        console.log('Remove');
+        console.log(indx);
+        if (indx !== -1) {
+          this.selectedFiles.splice(indx, 1);
+        }
+      }
      /* for (const obj of this.personalDirectories) {
         const indx = this.selectedFiles.indexOf(obj);
         if (indx !== -1) {
@@ -249,21 +280,21 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
     }
   }
 
-  onSelection($event, selectedFiles) {
+  onSelection($event) {
+    console.log($event);
     this.isSingleClick = true;
-    console.log($event.option._value);
     setTimeout(() => {
       if (this.isSingleClick ){
 
         // const file: SelFilesType = {fileNameObject: $event.option._value, directory: this.selectedDirectory };
-        if ($event.option._selected) {
+        if ($event.options[0]._selected) {
           console.log(this.selectedFiles);
           const indx = this.selectedFiles.findIndex(x =>
-              x['name'] === $event.option._value.name
+              x['name'] === $event.options[0]._value.name
           );
           console.log(indx);
           if ( indx === -1) {
-            this.selectedFiles.push($event.option._value);
+            this.selectedFiles.push($event.options[0]._value);
           }
         } else {
           /*const indx = this.selectedFiles.indexOf($event.option._value);
@@ -290,11 +321,12 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   }
 
   onRemoving($event, selectedList) {
-    if ($event.option._selected) {
-      const indx = this.selectedFiles.indexOf($event.option._value);
+    console.log($event);
+    if ($event[0]._selected) {
+      const indx = this.selectedFiles.indexOf($event[0]._value);
       if ( indx !== -1) {
         this.selectedFiles.splice(indx, 1);
-        const indx2 = this.selectedOptions.indexOf($event.option._value.name);
+        const indx2 = this.selectedOptions.indexOf($event[0]._value.name);
         if (indx2 !== -1) {
           this.selectedOptions.splice(indx2, 1);
           selectedList.writeValue(this.selectedOptions);
@@ -305,6 +337,9 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   }
 
   isFolder(file) {
+    console.log(this.personalDirectories);
+    console.log(this.selectedFiles);
+    console.log(file);
     if (file.children.length > 0) {
       return true;
     } else {
@@ -489,6 +524,24 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   }
   setDirectory(directory) {
     this.selectedDirectory = directory;
+  }
+  searchDirectory(directory) {
+    this.checkFlag = false;
+    this.selectedDirectory = directory;
+    this.globusService.getDirectory(this.selectedDirectory,
+        this.selectedEndPoint.id,
+        this.transferData.userAccessTokenData.other_tokens[0].access_token)
+        .subscribe(
+            data => {
+              console.log(data);
+              this.processDirectories(data);
+            },
+            error => {
+              console.log(error);
+            },
+            () => {
+            }
+        );
   }
 
 
