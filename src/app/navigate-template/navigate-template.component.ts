@@ -499,7 +499,7 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
       }
     }
     console.log('Start submitting!!!');
-    let data = forkJoin(array)
+    const data = forkJoin(array)
         .pipe(flatMap(obj => {
           const user = obj[0];
           console.log(user);
@@ -509,12 +509,12 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
                 '"numberOfFiles":' + this.listOfAllFiles.length +
                 '}';
           } else {
-            let i =0;
+            let i = 0;
             let files = '';
-            for (let f of this.listOfAllFiles) {
+            for (const f of this.listOfAllFiles) {
               i = i + 1;
-              console.log(i)
-              console.log(this.listOfAllFiles.length)
+              console.log(i);
+              console.log(this.listOfAllFiles.length);
               if (i < this.listOfAllFiles.length) {
                 files = files + '"' + this.selectedEndPoint.id + f + '",';
               } else {
@@ -530,15 +530,15 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
               catchError(err => {
                 console.log(err);
                 return throwError(err);
-         }))
-        if (this.transferData.managed) {
+         }));
+    if (this.transferData.managed) {
          data.
           pipe(flatMap(data => this.my_func2(data)))
               .pipe(flatMap(data => this.my_func(data)))
               .subscribe(
                   data => {
                     console.log(data);
-                      this.taskId = data['task_id'];
+                    this.taskId = data['task_id'];
                   },
                   error => {
                     console.log(error);
@@ -571,7 +571,7 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
                     console.log('Transfer submitted');
                     this.writeToDataverse();
                   }
-              )
+              );
         }
   }
 

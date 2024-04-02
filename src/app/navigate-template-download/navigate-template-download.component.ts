@@ -68,6 +68,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   files: Array<string>;
   paths: Array<object>;
   levels: Stack<object>;
+  allDataFiles: Array<any>;
 
   loaded: boolean;
   tree: any;
@@ -166,6 +167,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
       this.files = new Array<string>();
       this.paths = new Array<object>();
       this.storageIdentifiers = new Array<string>();
+      this.allDataFiles = new Array<any>();
       for (const obj of data.data) {
         if (typeof obj.directoryLabel !== 'undefined') {
           const fullFile = obj.directoryLabel + '/' + obj.label;
@@ -178,6 +180,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
         console.log(obj.dataFile.storageIdentifier);
         console.log(obj.dataFile.storageIdentifier.split(':')[2]);
         this.storageIdentifiers.push(obj.dataFile.storageIdentifier.split(':')[2]);
+        this.allDataFiles.push(obj.dataFile);
       }
       console.log(this.files);
       console.log(this.paths);
@@ -196,6 +199,8 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
       const path = paths[i];
       let currentLevel = tree;
       const storageId = this.storageIdentifiers[i];
+      console.log(this.allDataFiles[i]);
+      const fileId = this.allDataFiles[i].id;
       for (let j = 0; j < path.length; j++) {
         const part = path[j];
 
@@ -207,6 +212,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
           const newPart = {
             name: part,
             storageIdentifier: storageId,
+            fId: fileId,
             children: [],
           };
 
@@ -382,6 +388,35 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
       }
     }
   }
+  askRequestDownload(data) {
+    console.log(data);
+    const user = data[0];
+    console.log(user);
+    let json_data = '{ ' +
+        '"principal":"' + user['sub'] + '",' +
+        '"fileIds":[';
+    let i = 0;
+    for (const f of this.selectedFiles) {
+      console.log(f);
+      if (i > 0) {
+        json_data = json_data + ',';
+      }
+      json_data = json_data + f['fId'];
+      i++;
+    }
+    json_data = json_data + ']}';
+    console.log(json_data);
+    // curl -H "X-Dataverse-key:$API_TOKEN" -H "Content-type:application/json" -X POST -d "$JSON_DATA" "$SERVER_URL/api/datasets/:persistentId/requestGlobusDownload?persistentId=$PERSISTENT_IDENTIFIER"
+    let urlPath = null;
+    for (const urlObject of this.transferData.signedUrls) {
+      console.log(urlObject);
+      if (this.transferData.managed && urlObject['name'] === 'requestGlobusDownload') {
+        urlPath = urlObject['signedUrl'];
+        break;
+      }
+    }
+    return this.globusService.postSimpleDataverse(urlPath, json_data);
+  }
   onSubmitTransfer() {
     this.listOfAllFiles = new Array<object>();
     this.listOfAllPaths = new Array<string>();
@@ -390,32 +425,14 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
     if (this.listOfAllFiles.length > 0) {
       const user = this.globusService.getUserInfo(this.transferData.userAccessTokenData.access_token);
 
-      const client = this.globusService.getClientToken(this.transferData.basicClientToken);
+      // const client = this.globusService.getClientToken(this.transferData.basicClientToken);
 
-      const array = [user, client]; // forkJoin;
+      const array = [user]; // forkJoin;
 
       forkJoin(array)
-          .pipe(flatMap(obj => {
-            this.clientToken = obj[1];
-            console.log(this.clientToken);
-            return this.globusService.getPermission(obj[1], obj[0],
-                    this.transferData.datasetDirectory,
-                    this.transferData.globusEndpoint, 'r');
-              }),
-              catchError(err => {
-                    console.log(err);
-                    if (err.status === 409) {
-                      console.log('Rule exists');
-                      return of(err);
-                    } else {
-                      return throwError(err);
-                    }
-                  }
-              ))
+          .pipe(flatMap(data => this.askRequestDownload(data)))
           .pipe(flatMap(data => {
-            console.log('Rules');
             console.log(data);
-            this.ruleId = data.access_id;
             return this.globusService.submitTransfer(this.transferData.userAccessTokenData.other_tokens[0].access_token);
           } ))
           .pipe(flatMap(data => this.globusService.submitTransferToUser(
@@ -426,6 +443,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
               data => {
                 console.log(data);
                 this.taskId = data['task_id'];
+                this.writeToDataverse(this.taskId);
               },
               error => {
                 console.log(error);
@@ -436,7 +454,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
               },
               () => {
                 console.log('Transfer submitted');
-                this.writeToDataverse();
+
                 // this.removeRule();
                 this.snackBar.open('The transfer was submitted', '', {
                   duration: 3000
@@ -446,22 +464,21 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
     }
   }
 
-  writeToDataverse() {
-    const url = this.transferData.siteUrl + '/api/datasets/:persistentId/deleteglobusRule?persistentId=' + this.transferData.datasetPid;
-    const formData: any = new FormData();
-
-    let body = '{ \"taskIdentifier\": \"' + this.taskId + '\"';
-    if (this.ruleId !== null && typeof this.ruleId !== 'undefined') {
-      body = body + ',\"ruleId\":' + '\"' + this.ruleId + '\"';
-    } else {
-      body = body + ',\"ruleId\":' + '\"' + '\"';
+  writeToDataverse(task_id) {
+    console.log(task_id);
+    let json_data = '{ ' +
+        '"taskIdentifier":"' + task_id + '"';
+    json_data = json_data + '}';
+    console.log(json_data);
+    let urlPath = null;
+    for (const urlObject of this.transferData.signedUrls) {
+      console.log(urlObject);
+      if (this.transferData.managed && urlObject['name'] === 'monitorGlobusDownload') {
+        urlPath = urlObject['signedUrl'];
+        break;
+      }
     }
-    body = body + '}';
-    console.log(body);
-
-    formData.append('jsonData', body);
-    console.log();
-    this.globusService.postDataverse(url, formData, this.configService.apiToken)
+    this.globusService.postSimpleDataverse(urlPath, json_data)
         .subscribe(
             data => {
               console.log(data);
