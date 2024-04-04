@@ -68,7 +68,7 @@ export class GlobusService {
     if (key !== 'null') {
       httpOptions = {
         // headers: new HttpHeaders({
-        //  'Content-Type': 'application/json'
+         // 'Content-Type': 'application/json'
         // })
       };
     }
@@ -170,21 +170,6 @@ export class GlobusService {
         .getGlobus(url, 'Bearer ' + userOtherAccessToken);
   }
 
-  generateStorageIdentifier() {
-    const identifier = uuid();
-    console.log(identifier);
-
-    // last 6 bytes, of the random UUID, in hex:
-
-    const hexRandom = identifier.substring(24);
-    console.log(hexRandom);
-    const hexTimestamp = new Date().getTime().toString(16);
-    console.log(hexTimestamp);
-    const storageIdentifier = hexTimestamp + '-' + hexRandom;
-    console.log(storageIdentifier);
-    return storageIdentifier;
-  }
-
   submitTransferItems(listOfAllFiles, paths, listOfAllStorageIdentifiersPaths,
                       submissionId, selectedEndPointId, globusEndpoint, userOtherAccessToken) {
     // console.log(paths);
@@ -258,7 +243,7 @@ export class GlobusService {
         }
 
         listOfFileNames.push(obj.name);
-        listOfAllStorageIdentifiers.push(this.generateStorageIdentifier());
+        // listOfAllStorageIdentifiers.push(this.generateStorageIdentifier());
       }
     }
   }

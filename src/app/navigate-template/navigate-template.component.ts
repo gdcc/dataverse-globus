@@ -329,11 +329,6 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
     console.log(selectedFile);
     console.log(selectedList);
     const files = selectedFile.map(o => o.value);
-    // this.isSingleClick = true;
-    // setTimeout(() => {
-    //   if (this.isSingleClick ) {
-    //     console.log('It is single click');
-    //
     files.forEach(file => {
       const indx = this.selectedFiles.indexOf(file);
       console.log(indx);
@@ -347,45 +342,6 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
         }
       }
     });
-    //     console.log(this.selectedFiles);
-    //
-    //     if (selectedFile.) {
-    //       console.log("event selected");
-    //       console.log(file);
-    //       console.log(this.selectedFiles);
-    //       const indx = this.selectedFiles.findIndex(x =>
-    //         x.fileNameObject === file.fileNameObject &&
-    //         x.directory === file.directory
-    //       );
-    //       console.log(indx);
-    //       if ( indx === -1) {
-    //         this.selectedFiles.push(file);
-    //       }
-    //     } else {
-    //       const indx = this.selectedFiles.indexOf(file);
-    //       if ( indx !== -1) {
-    //         this.selectedFiles.splice(indx, 1);
-    //       }
-    //       this.checkFlag = false;
-    //     }
-    //   }
-    //   }
-    // }, 250);
-
-
-    //   $event, selectedList) {
-    // if ($event.option._selected) {
-    //   const indx = this.selectedFiles.indexOf($event.option._value);
-    //   if ( indx !== -1) {
-    //     this.selectedFiles.splice(indx, 1);
-    //     const indx2 = this.selectedOptions.indexOf($event.option._value.fileNameObject);
-    //     if (indx2 !== -1) {
-    //       this.selectedOptions.splice(indx2, 1);
-    //       selectedList.writeValue(this.selectedOptions);
-    //       this.checkFlag = false;
-    //     }
-    //   }
-    // }
   }
 
   onSubmitTransfer() {

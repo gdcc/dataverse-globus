@@ -24,7 +24,7 @@ export interface TransferData {
   datasetId: string;
   key: string;
   siteUrl: string;
-  fileId: string;
+  files: any;
   fileMetadataId: string;
   storePrefix: string;
   signedUrls: any;

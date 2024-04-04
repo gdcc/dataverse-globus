@@ -10,7 +10,6 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
-import {consumerDestroy} from '@angular/core/primitives/signals';
 
 export interface Permissions {
     DATA_TYPE: string;
@@ -79,45 +78,13 @@ export class InterfaceComponent implements OnInit {
         console.log(callback);
         console.log(code);
         const dvLocale = this.globusService.getParameterByName('dvLocale');
-        if (typeof callback !== undefined && callback != null) {
+        if (typeof callback !== 'undefined' && callback != null) {
           const code = this.getCode(callback, dvLocale);
         } else {
             console.log('else');
             this.getUserAccessToken(code);
 
         }
-
-
-
-      // if (code === null || code === '') {
-      //       console.log(this.transferData);
-      //       this.getParameters(code);
-      //       this.setLanguage();
-      //       console.log(this.transferData.fileId);
-      //       if (this.transferData.fileId === null) {
-      //          console.log('Dataset level');
-      //          const state = this.encodeStateDataset();
-      //          this.getCode(state);
-      //      } else {
-      //          console.log('file level');
-      //          const state = this.encodeStateFile();
-      //          this.getCode(state);
-      //      }
-      //   } else {
-      //       console.log(code);
-      //       const n = this.redirectURL.substring(0, this.redirectURL.length - 1 ).lastIndexOf('/');
-      //       const typeOfGlobus = this.redirectURL.substring(n);
-      //       console.log(typeOfGlobus);
-      //       if (typeOfGlobus.localeCompare('/download-file/') === 0) {
-      //           console.log('This is file level');
-      //           this.decodeStateFile();
-      //       } else {
-      //           this.decodeStateDataset();
-      //           console.log('The dataset ' + this.transferData.datasetDirectory);
-      //       }
-      //       this.setLanguage();
-      //       this.getUserAccessToken(code);
-      //   }
     }
 
     setLanguage() {
@@ -239,70 +206,12 @@ export class InterfaceComponent implements OnInit {
             this.transferData.referenceEndpointsWithPaths = parameters.referenceEndpointsWithPaths;
             console.log(this.transferData.referenceEndpointsWithPaths);
         }
+        if (typeof parameters.files !== 'undefined' || parameters.files !== null) {
+            console.log("FOUND FILES!!!");
+            console.log(parameters.files);
+            this.transferData.files = parameters.files;
+        }
 
     }
-    encodeStateDataset() {
-        const state = btoa(this.transferData.datasetPid + '_'
-            + this.transferData.key + '_'
-            + this.transferData.siteUrl + '_'
-            + this.transferData.datasetId + '_'
-            + this.transferData.datasetVersion + '_'
-            + this.transferData.storePrefix + '_'
-            + this.dvLocale); // encode
-        return state;
-    }
-    encodeStateFile() {
-        const state = btoa(this.transferData.key + '_'
-            + this.transferData.siteUrl + '_'
-            + this.transferData.fileId + '_'
-            + this.transferData.fileMetadataId + '_'
-            + this.transferData.datasetVersion + '_'
-            + this.transferData.storePrefix + '_'
-            + this.dvLocale); // encode
-        return state;
-    }
-    decodeStateDataset() {
-        const state = this.globusService.getParameterByName('state');
-        const decodedState = atob(state);
-        console.log(decodedState);
-        const parameters = decodedState.split('_');
-        this.transferData.datasetPid = parameters[0];
-        this.transferData.siteUrl = parameters[2];
-        console.log(this.transferData.datasetPid);
-        console.log(this.transferData.siteUrl);
-        this.transferData.datasetId = parameters[3];
-        this.transferData.datasetVersion = parameters[4];
-        this.transferData.storePrefix = parameters[5];
-        console.log(this.transferData.datasetId);
-        console.log(this.transferData.datasetVersion);
-        this.dvLocale = parameters[6];
-        console.log(this.dvLocale);
 
-        this.transferData.datasetDirectory = this.config.includeBucketInPath ? ('/' +
-            this.transferData.storePrefix.substring(this.transferData.storePrefix.indexOf('://')
-            + 3, this.transferData.storePrefix.length - 1) + '/') : '/';
-        this.transferData.datasetDirectory = this.transferData.datasetDirectory +
-            this.transferData.datasetPid.substring(this.transferData.datasetPid.indexOf(':') + 1) + '/';
-        this.transferData.key = parameters[1];
-    }
-
-    decodeStateFile() {
-        const state = this.globusService.getParameterByName('state');
-        const decodedState = atob(state);
-        console.log(decodedState);
-        const parameters = decodedState.split('_');
-        this.transferData.siteUrl = parameters[1];
-        console.log(this.transferData.siteUrl);
-        console.log(this.transferData.siteUrl);
-        this.transferData.fileId = parameters[2];
-        console.log(this.transferData.fileId);
-        this.transferData.fileMetadataId = parameters[3];
-        console.log(this.transferData.fileMetadataId);
-        this.transferData.datasetVersion = parameters[4];
-        console.log(this.transferData.datasetVersion);
-        this.transferData.storePrefix = parameters[5];
-        this.dvLocale = parameters[6];
-        console.log(this.dvLocale);
-        this.transferData.key = parameters[0];
-    }
 }

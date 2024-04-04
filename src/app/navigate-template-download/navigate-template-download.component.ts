@@ -90,6 +90,12 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
 
 
   ngOnInit(): void {
+    if (this.selectedEndPoint.default_directory == null) {
+      this.selectedDirectory = '~/';
+    } else {
+      this.selectedDirectory = this.selectedEndPoint.default_directory;
+      console.log(this.selectedEndPoint);
+    }
     // Not needed - ngOnChanges is called prior to ngOnInit
     // this.startComponent();
   }
@@ -113,8 +119,8 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
       console.log(this.selectedEndPoint);
     }
     if (typeof this.transferData.userAccessTokenData !== 'undefined' && typeof this.transferData.globusEndpoint !== 'undefined') {
-      this.findDirectoryDefault()
-          .pipe(flatMap(data => this.findDirectories(data)))
+
+      this.findDirectories()
           .subscribe(
               data => this.processDirectories(data),
               error => {
@@ -130,8 +136,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
     }
   }
 
-  findDirectories(data) {
-    this.selectedDirectory = data['path'];
+  findDirectories() {
     console.log(this.transferData.siteUrl);
     let urlPath = '';
     if (this.type !== 2) {
@@ -148,18 +153,6 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
       return of();
     }
   }
-
-  findDirectoryDefault() {
-    if (this.selectedEndPoint.default_directory == null) {
-      this.selectedDirectory = '~/';
-    } else {
-      this.selectedDirectory = this.selectedEndPoint.default_directory;
-    }
-    const url = 'https://transfer.api.globusonline.org/v0.10/operation/endpoint/' + this.selectedEndPoint.id + '/ls';
-    return this.globusService
-        .getGlobus(url, 'Bearer ' + this.transferData.userAccessTokenData.other_tokens[0].access_token);
-
-  }
   processDirectories(data) {
     console.log(data);
     if (this.type !== 2) {
@@ -169,18 +162,26 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
       this.storageIdentifiers = new Array<string>();
       this.allDataFiles = new Array<any>();
       for (const obj of data.data) {
-        if (typeof obj.directoryLabel !== 'undefined') {
-          const fullFile = obj.directoryLabel + '/' + obj.label;
-          this.files.push(fullFile);
-          this.paths.push(fullFile.split('/'));
-        } else {
-          this.files.push(obj.label);
-          this.paths.push(obj.label.split('/'));
+        console.log("PROCESS DIRECTORIES!!!");
+        console.log(obj)
+        console.log(this.transferData.files);
+        console.log(this.transferData['files']);
+        for (const f in this.transferData.files) {
+          if (obj.dataFile.id == f) {
+            if (typeof obj.directoryLabel !== 'undefined') {
+              const fullFile = obj.directoryLabel + '/' + obj.label;
+              this.files.push(fullFile);
+              this.paths.push(fullFile.split('/'));
+            } else {
+              this.files.push(obj.label);
+              this.paths.push(obj.label.split('/'));
+            }
+            console.log(obj.dataFile.storageIdentifier);
+            console.log(obj.dataFile.storageIdentifier.split(':')[2]);
+            this.storageIdentifiers.push(obj.dataFile.storageIdentifier.split(':')[2]);
+            this.allDataFiles.push(obj.dataFile);
+          }
         }
-        console.log(obj.dataFile.storageIdentifier);
-        console.log(obj.dataFile.storageIdentifier.split(':')[2]);
-        this.storageIdentifiers.push(obj.dataFile.storageIdentifier.split(':')[2]);
-        this.allDataFiles.push(obj.dataFile);
       }
       console.log(this.files);
       console.log(this.paths);
