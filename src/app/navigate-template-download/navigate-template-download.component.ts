@@ -91,7 +91,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     if (this.selectedEndPoint.default_directory == null) {
-      this.selectedDirectory = '~/';
+      this.selectedDirectory = '/~/';
     } else {
       this.selectedDirectory = this.selectedEndPoint.default_directory;
       console.log(this.selectedEndPoint);
@@ -163,11 +163,12 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
       this.allDataFiles = new Array<any>();
       for (const obj of data.data) {
         console.log("PROCESS DIRECTORIES!!!");
-        console.log(obj)
+        console.log(obj);
         console.log(this.transferData.files);
         console.log(this.transferData['files']);
         for (const f in this.transferData.files) {
           if (obj.dataFile.id == f) {
+            console.log(this.transferData.files[f]);
             if (typeof obj.directoryLabel !== 'undefined') {
               const fullFile = obj.directoryLabel + '/' + obj.label;
               this.files.push(fullFile);
@@ -178,7 +179,23 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
             }
             console.log(obj.dataFile.storageIdentifier);
             console.log(obj.dataFile.storageIdentifier.split(':')[2]);
-            this.storageIdentifiers.push(obj.dataFile.storageIdentifier.split(':')[2]);
+            if (this.transferData.managed) {
+              this.storageIdentifiers.push(obj.dataFile.storageIdentifier.split(':')[2]);
+            } else {
+              const ind =  this.transferData.files[f].indexOf('/');
+              this.transferData.globusEndpoint = this.transferData.files[f].substring(0, ind);
+              console.log(obj.dataFile.storageIdentifier);
+              let temp = obj.dataFile.storageIdentifier.split(':')[1];
+              //const value = this.transferData.files[f];
+              //this.transferData.globusEndpoint = value.substring(value.indexOf('/'));
+              //console.log(this.transferData.globusEndpoint);
+              temp = temp.split('//')[2];
+              const index = temp.indexOf('/');
+
+              temp = temp.substring(index);
+              console.log(temp);
+              this.storageIdentifiers.push(temp);
+            }
             this.allDataFiles.push(obj.dataFile);
           }
         }
@@ -411,7 +428,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
     let urlPath = null;
     for (const urlObject of this.transferData.signedUrls) {
       console.log(urlObject);
-      if (this.transferData.managed && urlObject['name'] === 'requestGlobusDownload') {
+      if (/*this.transferData.managed &&*/ urlObject['name'] === 'requestGlobusDownload') {
         urlPath = urlObject['signedUrl'];
         break;
       }
@@ -429,7 +446,11 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
       // const client = this.globusService.getClientToken(this.transferData.basicClientToken);
 
       const array = [user]; // forkJoin;
-
+      let sourceDatasetDirectory = '';
+      if (this.transferData.managed) {
+        sourceDatasetDirectory = this.transferData.datasetDirectory;
+      }
+      console.log(this.selectedDirectory);
       forkJoin(array)
           .pipe(flatMap(data => this.askRequestDownload(data)))
           .pipe(flatMap(data => {
@@ -437,14 +458,16 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
             return this.globusService.submitTransfer(this.transferData.userAccessTokenData.other_tokens[0].access_token);
           } ))
           .pipe(flatMap(data => this.globusService.submitTransferToUser(
-              this.listOfAllFiles, this.listOfAllPaths, data['value'], this.transferData.datasetDirectory,
+              this.listOfAllFiles, this.listOfAllPaths, data['value'], sourceDatasetDirectory,
               this.selectedDirectory, this.transferData.globusEndpoint, this.selectedEndPoint,
               this.transferData.userAccessTokenData.other_tokens[0].access_token)))
           .subscribe(
               data => {
                 console.log(data);
                 this.taskId = data['task_id'];
-                this.writeToDataverse(this.taskId);
+                if (this.transferData.managed) {
+                  this.writeToDataverse(this.taskId);
+                }
               },
               error => {
                 console.log(error);
@@ -544,15 +567,17 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
     this.selectedDirectory = directory;
   }
   searchDirectory(directory) {
+    console.log("Start search");
     this.checkFlag = false;
     this.selectedDirectory = directory;
+    console.log(this.selectedDirectory);
     this.globusService.getDirectory(this.selectedDirectory,
         this.selectedEndPoint.id,
         this.transferData.userAccessTokenData.other_tokens[0].access_token)
         .subscribe(
             data => {
               console.log(data);
-              this.processDirectories(data);
+              // this.processDirectories(data);
             },
             error => {
               console.log(error);

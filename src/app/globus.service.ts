@@ -166,6 +166,7 @@ export class GlobusService {
     console.log('start getDirectory');
     const url = 'https://transfer.api.globusonline.org/v0.10/operation/endpoint/' + selectedEndPointId +
         '/ls?path=' + path;
+    console.log(url);
     return this
         .getGlobus(url, 'Bearer ' + userOtherAccessToken);
   }
@@ -207,6 +208,10 @@ export class GlobusService {
     console.log(submissionId);
     const url = 'https://transfer.api.globusonline.org/v0.10/transfer';
     const taskItemsArray = new Array();
+    const lastCharacter = selectedDirectory.slice(selectedDirectory.length - 1);
+    if (lastCharacter !== '/') {
+      selectedDirectory = selectedDirectory + '/';
+    }
     for (let i = 0; i < listOfAllFiles.length; i++) {
       console.log(listOfAllFiles[i]);
       const taskItem = {
