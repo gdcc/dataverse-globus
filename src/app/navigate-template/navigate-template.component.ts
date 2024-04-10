@@ -60,7 +60,6 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
   selectedOptions: any;
   selectedFiles: Array<SelFilesType>;
   selectedDirectory: any;
-  isSingleClick: boolean;
   listOfAllFiles: Array<string>;
   listOfFileNames: Array<string>;
   listOfAllStorageIdentifiers: Array<string>;
@@ -71,6 +70,8 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
   load: boolean;
   ruleId: string;
   clientToken: any;
+  preventSingleClick = false;
+  timer: any;
 
   ngOnInit(): void {
   }
@@ -88,7 +89,6 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
     this.accessEndpointFlag = false;
     this.selectedFiles = new Array<SelFilesType>();
     this.checkFlag = false;
-    this.isSingleClick = true;
     this.listOfAllFiles = new Array<string>();
     this.listOfFileNames = new Array<string>();
     this.listOfDirectoryLabels = new Array<string>();
@@ -250,34 +250,41 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
   }
 
   onSelection($event) {
-    console.log($event);
-    if (this.selectedFiles == null) {
-        this.selectedFiles = new Array<SelFilesType>();
-    }
-    if ($event.options[0].selected) {
-        const indx = this.selectedFiles.findIndex(x =>
-            x.fileNameObject['type'] === $event.options[0]._value['type'] &&
-            x.fileNameObject['name'] === $event.options[0]._value['name'] &&
-            x.directory === this.selectedDirectory
-        );
-        if (indx === -1) {
-          this.selectedFiles.push({fileNameObject: $event.options[0]._value, directory: this.selectedDirectory});
+    this.preventSingleClick = false;
+    const delay = 400;
+    this.timer = setTimeout(() => {
+      if (!this.preventSingleClick) {
+
+        console.log($event);
+        if (this.selectedFiles == null) {
+          this.selectedFiles = new Array<SelFilesType>();
         }
-        console.log(this.selectedFiles);
-    } else {
-        console.log(this.selectedFiles);
-        console.log("Not found");
-        const indx = this.selectedFiles.findIndex(x =>
-                x.fileNameObject['type'] === $event.options[0]._value['type'] &&
-                x.fileNameObject['name'] === $event.options[0]._value['name'] &&
-                x.directory === this.selectedDirectory
-        );
-        console.log(indx);
-        if ( indx !== -1) {
-           this.selectedFiles.splice(indx, 1);
-           this.checkFlag = false;
+        if ($event.options[0].selected) {
+          const indx = this.selectedFiles.findIndex(x =>
+              x.fileNameObject['type'] === $event.options[0]._value['type'] &&
+              x.fileNameObject['name'] === $event.options[0]._value['name'] &&
+              x.directory === this.selectedDirectory
+          );
+          if (indx === -1) {
+            this.selectedFiles.push({fileNameObject: $event.options[0]._value, directory: this.selectedDirectory});
+          }
+          console.log(this.selectedFiles);
+        } else {
+          console.log(this.selectedFiles);
+          console.log("Not found");
+          const indx = this.selectedFiles.findIndex(x =>
+              x.fileNameObject['type'] === $event.options[0]._value['type'] &&
+              x.fileNameObject['name'] === $event.options[0]._value['name'] &&
+              x.directory === this.selectedDirectory
+          );
+          console.log(indx);
+          if (indx !== -1) {
+            this.selectedFiles.splice(indx, 1);
+            this.checkFlag = false;
+          }
         }
-    }
+      }
+    }, delay);
   }
 
   checkBox($event, item) {
@@ -288,7 +295,8 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
   }
 
   openDirectory($event, item, directory, check) {
-    this.isSingleClick = false;
+    this.preventSingleClick = true;
+    clearTimeout(this.timer);
     this.selectedOptions = new Array<object>();
     if (item.type === 'dir') {
       this.selectedDirectory = this.selectedDirectory + item.name;

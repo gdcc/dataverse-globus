@@ -2,7 +2,7 @@
      <br>
      <h3 class="center">"{{this.selectedEndPoint.display_name}}" {{'TEMPLATE.ERRORACTIVATION' | translate}}</h3>
  </div>
- <div class="left">
+ <div class="left" *ngIf="accessEndpointFlag">
      <mat-form-field *ngIf="selectedDirectory!==null" appearance="fill">
          <mat-label [attr.aria-label]="'TEMPLATE.DIRECTORY' | translate">{{'TEMPLATE.DIRECTORY' | translate}}</mat-label>
          <input type="search" matInput placeholder="'TEMPLATE.DIRECTORY' | translate" value="{{selectedDirectory}}" (keydown.enter)="searchDirectory($event.target.value)" >
