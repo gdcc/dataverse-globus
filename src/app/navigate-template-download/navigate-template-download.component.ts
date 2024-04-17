@@ -186,11 +186,15 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
               const ind =  this.transferData.files[f].indexOf('/');
               this.transferData.globusEndpoint = this.transferData.files[f].substring(0, ind);
               console.log(obj.dataFile.storageIdentifier);
-              let temp = obj.dataFile.storageIdentifier.split(':')[1];
+
+
+              // let temp = obj.dataFile.storageIdentifier.split(':')[1];
+              let temp = obj.dataFile.storageIdentifier.split('//').pop();
+              console.log(temp);
               // const value = this.transferData.files[f];
               // this.transferData.globusEndpoint = value.substring(value.indexOf('/'));
               // console.log(this.transferData.globusEndpoint);
-              temp = temp.split('//')[2];
+              // temp = temp.split('//')[2];
               const index = temp.indexOf('/');
 
               temp = temp.substring(index);
