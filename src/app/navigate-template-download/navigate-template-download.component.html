@@ -29,6 +29,12 @@
             </button>
         </div>
         <div class="first-row">
+            <button  mat-stroked-button (click)="UpOneFolderDownloadTo()" >
+                <mat-icon class="class-icon" matSuffix
+                          [attr.aria-label]="'TEMPLATE.UP' | translate">subdirectory_arrow_left
+                </mat-icon>
+                {{'TEMPLATE.UP' | translate}}
+            </button>
             <button mat-stroked-button (click)="removeAllFromSelected(directory)">
                 <mat-icon class="class-icon"  matSuffix
                           [attr.aria-label]="'TEMPLATE.REMOVEALL' | translate">
@@ -51,6 +57,7 @@
                             {{item.name}}
                         </mat-list-item>
                     </mat-list-option>
+
                 </mat-selection-list>
 
             </cdk-virtual-scroll-viewport>
@@ -67,6 +74,21 @@
                         </mat-list-item>
                     </mat-list-option>
                 </mat-selection-list>
+                <div *ngIf="selectedFiles.length === 0" >
+                    <h3>{{'TEMPLATE.NOSELECTEDFILES' | translate}}</h3>
+                </div>
+                <h2 matSubheader>{{'TEMPLATE.SELECTEFOLDERTODOWNLOADTO' | translate}}</h2>
+                <mat-list  *ngFor="let item of downloadToDirectories" >
+                    <mat-list-item color="primary"
+                                   (dblclick)="openDirectoryDownload($event, item)">
+                        <mat-icon class="class-icon" matSuffix>folder</mat-icon>
+                        {{item.name}}
+                    </mat-list-item>
+                </mat-list>
+                <div *ngIf="downloadToDirectories.length === 0" >
+                    <h3>{{'TEMPLATE.NOSUBFOLDERS' | translate}}</h3>
+                </div>
+
             </cdk-virtual-scroll-viewport>
         </div>
     </div>

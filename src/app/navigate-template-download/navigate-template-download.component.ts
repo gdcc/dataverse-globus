@@ -68,6 +68,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   files: Array<string>;
   paths: Array<object>;
   levels: Stack<object>;
+  levelsDownloadTo: Stack<object>;
   allDataFiles: Array<any>;
 
   loaded: boolean;
@@ -75,6 +76,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
 
   checkFlag: boolean;
   personalDirectories: any;
+  downloadToDirectories: any;
   selectedOptions: any;
   selectedFiles: Array<object>;
   isSingleClick: boolean;
@@ -128,12 +130,40 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
                 this.loaded = true;
               },
               () => {
-                this.loaded = true;
-                this.accessEndpointFlag = true;
-                console.log('complete');
+                this.getDownloadingToDirectories()
+                    .subscribe(
+                        data => this.processDirectoriesToDownload(data),
+                        error => {
+                          console.log(error);
+                          this.loaded = true;
+                        },
+                        () => {
+                          console.log(this.checkFlag);
+                          this.accessEndpointFlag = true;
+                          this.loaded = true;
+                        }
+                    );
               }
           );
     }
+  }
+  processDirectoriesToDownload(data) {
+    this.downloadToDirectories = new Array<object>();
+    console.log(data.path);
+    this.selectedDirectory = data.path;
+    for (const obj of data.DATA) {
+      if (obj.type === 'dir') {
+        this.downloadToDirectories.push(obj);
+      }
+    }
+    this.levelsDownloadTo = new Stack<object>();
+  }
+
+  getDownloadingToDirectories() {
+    const url = 'https://transfer.api.globusonline.org/v0.10/operation/endpoint/' + this.selectedEndPoint.id + '/ls' + '?path=' +
+        this.selectedDirectory;
+    return this.globusService
+        .getGlobus(url, 'Bearer ' + this.transferData.userAccessTokenData.other_tokens[0].access_token);
   }
 
   findDirectories() {
@@ -384,6 +414,61 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
       this.checkFlag = false;
     }
   }
+  UpOneFolderDownloadTo() {
+    if (this.selectedDirectory === '/~/' ) {
+      return;
+    }
+    this.globusService.getDirectory(this.selectedDirectory,
+        this.selectedEndPoint.id,
+        this.transferData.userAccessTokenData.other_tokens[0].access_token)
+        .pipe(flatMap(data => this.upFolderProcess(data)))
+        .subscribe(
+            data => {
+              if (data !== null) {
+                this.processDirectoriesToDownload(data);
+              }
+            },
+            error => {
+              console.log(error);
+            },
+            () => {
+            }
+        );
+  }
+  upFolderProcess(data) {
+    console.log(data);
+    // let absolutePath = data.absolute_path;
+    let absolutePath = data['path'];
+    if (data.absolute_path == null || data.absolute_path === 'null') {
+      absolutePath = data.absolute_path;
+    }
+    if (absolutePath !== null && absolutePath.localeCompare('/') !== 0) {
+      const temp = absolutePath.substr(0, absolutePath.lastIndexOf('/') - 1);
+      const path = temp.substr(0, temp.lastIndexOf('/')) + '/';
+      return this.globusService.getDirectory(path,
+          this.selectedEndPoint.id,
+          this.transferData.userAccessTokenData.other_tokens[0].access_token);
+    } else {
+      return of(null);
+    }
+  }
+  openDirectoryDownload($event, item) {
+    console.log(item);
+    console.log($event);
+    console.log(item.name);
+    this.selectedDirectory = this.selectedDirectory + item.name + '/';
+    console.log(this.selectedDirectory);
+    this.getDownloadingToDirectories()
+        .subscribe(
+            data => this.processDirectoriesToDownload(data),
+            error => {
+              console.log(error);
+            },
+            () => {
+              console.log(this.downloadToDirectories);
+            }
+        );
+  }
 
   openDirectory($event, item, directory, check) {
     this.isSingleClick = false;
@@ -573,7 +658,6 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   }
   searchDirectory(directory) {
     console.log("Start search");
-    this.checkFlag = false;
     this.selectedDirectory = directory;
     console.log(this.selectedDirectory);
     this.globusService.getDirectory(this.selectedDirectory,
@@ -582,7 +666,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
         .subscribe(
             data => {
               console.log(data);
-              // this.processDirectories(data);
+              this.processDirectoriesToDownload(data);
             },
             error => {
               console.log(error);
