@@ -178,17 +178,18 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
               this.paths.push(obj.label.split('/'));
             }
             console.log(obj.dataFile.storageIdentifier);
-            console.log(obj.dataFile.storageIdentifier.split(':')[2]);
+            console.log(obj.dataFile.storageIdentifier.split(':').pop());
             if (this.transferData.managed) {
-              this.storageIdentifiers.push(obj.dataFile.storageIdentifier.split(':')[2]);
+              // this.storageIdentifiers.push(obj.dataFile.storageIdentifier.split(':')[2]);
+              this.storageIdentifiers.push(obj.dataFile.storageIdentifier.split(':').pop());
             } else {
               const ind =  this.transferData.files[f].indexOf('/');
               this.transferData.globusEndpoint = this.transferData.files[f].substring(0, ind);
               console.log(obj.dataFile.storageIdentifier);
               let temp = obj.dataFile.storageIdentifier.split(':')[1];
-              //const value = this.transferData.files[f];
-              //this.transferData.globusEndpoint = value.substring(value.indexOf('/'));
-              //console.log(this.transferData.globusEndpoint);
+              // const value = this.transferData.files[f];
+              // this.transferData.globusEndpoint = value.substring(value.indexOf('/'));
+              // console.log(this.transferData.globusEndpoint);
               temp = temp.split('//')[2];
               const index = temp.indexOf('/');
 
@@ -586,7 +587,4 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
             }
         );
   }
-
-
-
 }
