@@ -99,7 +99,7 @@ export class EndpointTemplateComponent implements OnInit, OnChanges {
     const array = new Array();
     for (const endPoint of this.transferData.referenceEndpointsWithPaths) {
       console.log(endPoint);
-      const userOtherAccessToken = this.transferData.userAccessTokenData.other_tokens[0].access_token;
+      const userOtherAccessToken = this.transferData.userAccessTokenData;
       // this.userAccessToken = userAccessTokenData.access_token;
       const url = 'https://transfer.api.globusonline.org/v0.10/endpoint/' + endPoint;
       console.log(url);
@@ -115,7 +115,7 @@ export class EndpointTemplateComponent implements OnInit, OnChanges {
     } else if (this.typeOfTab === 1) {
       url = 'https://transfer.api.globusonline.org/v0.10/endpoint_search?filter_scope=recently-used';
     }
-    const userOtherAccessToken = this.transferData.userAccessTokenData.other_tokens[0].access_token;
+    const userOtherAccessToken = this.transferData.userAccessTokenData;
     // this.userAccessToken = userAccessTokenData.access_token;
     return this.globusService
         .getGlobus(url, 'Bearer ' + userOtherAccessToken);

@@ -163,7 +163,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
     const url = 'https://transfer.api.globusonline.org/v0.10/operation/endpoint/' + this.selectedEndPoint.id + '/ls' + '?path=' +
         this.selectedDirectory;
     return this.globusService
-        .getGlobus(url, 'Bearer ' + this.transferData.userAccessTokenData.other_tokens[0].access_token);
+        .getGlobus(url, 'Bearer ' + this.transferData.userAccessTokenData);
   }
 
   findDirectories() {
@@ -420,7 +420,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
     }
     this.globusService.getDirectory(this.selectedDirectory,
         this.selectedEndPoint.id,
-        this.transferData.userAccessTokenData.other_tokens[0].access_token)
+        this.transferData.userAccessTokenData)
         .pipe(flatMap(data => this.upFolderProcess(data)))
         .subscribe(
             data => {
@@ -447,7 +447,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
       const path = temp.substr(0, temp.lastIndexOf('/')) + '/';
       return this.globusService.getDirectory(path,
           this.selectedEndPoint.id,
-          this.transferData.userAccessTokenData.other_tokens[0].access_token);
+          this.transferData.userAccessTokenData);
     } else {
       return of(null);
     }
@@ -545,12 +545,12 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
           .pipe(flatMap(data => this.askRequestDownload(data)))
           .pipe(flatMap(data => {
             console.log(data);
-            return this.globusService.submitTransfer(this.transferData.userAccessTokenData.other_tokens[0].access_token);
+            return this.globusService.submitTransfer(this.transferData.userAccessTokenData);
           } ))
           .pipe(flatMap(data => this.globusService.submitTransferToUser(
               this.listOfAllFiles, this.listOfAllPaths, data['value'], sourceDatasetDirectory,
               this.selectedDirectory, this.transferData.globusEndpoint, this.selectedEndPoint,
-              this.transferData.userAccessTokenData.other_tokens[0].access_token)))
+              this.transferData.userAccessTokenData)))
           .subscribe(
               data => {
                 console.log(data);
@@ -662,7 +662,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
     console.log(this.selectedDirectory);
     this.globusService.getDirectory(this.selectedDirectory,
         this.selectedEndPoint.id,
-        this.transferData.userAccessTokenData.other_tokens[0].access_token)
+        this.transferData.userAccessTokenData)
         .subscribe(
             data => {
               console.log(data);

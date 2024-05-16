@@ -91,7 +91,7 @@ export class SearchEndpointComponent implements OnInit, AfterViewInit, OnChanges
     // this.userOtherAccessToken = userAccessTokenData.other_tokens[0].access_token;
     // this.userAccessToken = userAccessTokenData.access_token;
     return this.globusService
-        .getGlobus(url, 'Bearer ' + this.dataTransfer.userAccessTokenData.other_tokens[0].access_token);
+        .getGlobus(url, 'Bearer ' + this.dataTransfer.userAccessTokenData);
   }
 
   getDisplayedColumns() {
@@ -120,8 +120,9 @@ export class SearchEndpointComponent implements OnInit, AfterViewInit, OnChanges
     console.log('opening dialog');
     this.dialogRef = this.dialog.open(NavigateDirectoriesComponent, {
         data: passingData,
+      height: '80%',
         // panelClass: 'field_width',
-        width: '800px'
+        width: '80%'
       });
 
   }

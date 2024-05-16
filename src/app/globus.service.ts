@@ -3,8 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 import { of, merge, from} from 'rxjs';
 import { filter, flatMap} from 'rxjs/operators';
-import {v4 as uuid } from 'uuid';
-import {Permissions} from './interface/interface.component';
 
 @Injectable()
 export class GlobusService {
@@ -49,11 +47,20 @@ export class GlobusService {
 
   postGlobus(url: string, body: string, key: string) {
     console.log('Start posting Globus');
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        Authorization: key
-      })
+    let httpOptions = {};
+    if (key != null) {
+      httpOptions = {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json',
+          Authorization: key
+        })
+      }
+    } else {
+        httpOptions = {
+          headers: new HttpHeaders({
+            'Content-Type': 'application/json'
+          })
+      }
 
     };
     return this.http.post(url, body, httpOptions);
@@ -94,8 +101,10 @@ export class GlobusService {
     return this.http.get(url,  httpOptions);
   }
 
-  getParameterByName(name) {
-    const url = window.location.href;
+  getParameterByName(name, url) {
+    if (url == null) {
+      url = window.location.href;
+    }
     name = name.replace(/[\[\]]/g, '\\$&');
     const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
     const results = regex.exec(url);
@@ -119,25 +128,6 @@ export class GlobusService {
     const url = 'https://auth.globus.org/v2/oauth2/userinfo';
     console.log(userAccessToken);
     return this.getGlobus(url, 'Bearer ' + userAccessToken);
-  }
-
-  getPermission(clientToken, userIdentity, datasetDirectory, globusEndpoint, userPerm) {
-    console.log('getting permissions!!!');
-    console.log(userIdentity);
-    console.log(clientToken);
-    const url = 'https://transfer.api.globusonline.org/v0.10/endpoint/' + globusEndpoint + '/access';
-    const key = 'Bearer ' + clientToken.other_tokens[0].access_token;
-    console.log(key);
-    const permissions: Permissions = {
-      DATA_TYPE: 'access',
-      principal_type: 'identity',
-      principal: userIdentity.sub,
-      path: datasetDirectory,
-      permissions: userPerm
-    };
-    const stringPermissions = JSON.stringify(permissions);
-    console.log(stringPermissions);
-    return this.postGlobus(url, stringPermissions, key);
   }
 
   submitTransfer(userOtherAccessToken) {

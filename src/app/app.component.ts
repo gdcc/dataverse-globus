@@ -9,7 +9,6 @@ export interface Config {
   redirectUploadURL: string,
   redirectDownloadURL: string,
   redirectDownloadFileURL: string,
-  basicGlobusToken: string,
   globusClientId: string,
   globusEndpoint: string,
   includeBucketInPath: boolean,

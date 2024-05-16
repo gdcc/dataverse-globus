@@ -57,7 +57,7 @@ export class RecentlyViewedComponentComponent implements OnChanges, OnInit {
     // this.userOtherAccessToken = userAccessTokenData.other_tokens[0].access_token;
     // this.userAccessToken = userAccessTokenData.access_token;
     return this.globusService
-        .getGlobus(url, 'Bearer ' + this.dataTransfer.userAccessTokenData.other_tokens[0].access_token);
+        .getGlobus(url, 'Bearer ' + this.dataTransfer.userAccessTokenData);
   }
 
 

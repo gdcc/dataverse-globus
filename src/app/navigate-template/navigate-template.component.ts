@@ -123,7 +123,7 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
     console.log(this.selectedEndPoint);
     const url = 'https://transfer.api.globusonline.org/v0.10/operation/endpoint/' + this.selectedEndPoint.id + '/ls';
     return this.globusService
-        .getGlobus(url, 'Bearer ' + this.transferData.userAccessTokenData.other_tokens[0].access_token);
+        .getGlobus(url, 'Bearer ' + this.transferData.userAccessTokenData);
 
   }
 
@@ -132,7 +132,7 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
     this.selectedDirectory = directory;
     this.globusService.getDirectory(this.selectedDirectory,
         this.selectedEndPoint.id,
-        this.transferData.userAccessTokenData.other_tokens[0].access_token)
+        this.transferData.userAccessTokenData)
         .subscribe(
             data => {
               console.log(data);
@@ -202,7 +202,7 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
     }
     this.globusService.getDirectory(this.selectedDirectory,
         this.selectedEndPoint.id,
-        this.transferData.userAccessTokenData.other_tokens[0].access_token)
+        this.transferData.userAccessTokenData)
         .pipe(flatMap(data => this.upFolderProcess(data)))
         .subscribe(
             data => {
@@ -231,7 +231,7 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
       const path = temp.substr(0, temp.lastIndexOf('/')) + '/';
       return this.globusService.getDirectory(path,
           this.selectedEndPoint.id,
-          this.transferData.userAccessTokenData.other_tokens[0].access_token);
+          this.transferData.userAccessTokenData);
     } else {
       return of(null);
     }
@@ -303,7 +303,7 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
 
       this.globusService.getDirectory(this.selectedDirectory,
           this.selectedEndPoint.id,
-          this.transferData.userAccessTokenData.other_tokens[0].access_token)
+          this.transferData.userAccessTokenData)
           .subscribe(
               data => {
                 console.log(data);
@@ -376,7 +376,7 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
         this.findAllSubFiles(directoriesArray, 0, labelsArray);
       } else {
         if (this.listOfAllFiles.length > 0) {
-          const user = this.globusService.getUserInfo(this.transferData.userAccessTokenData.access_token);
+          const user = this.globusService.getUserInfo(this.transferData.userAccessTokenData);
 
           // const client = this.globusService.getClientToken(this.transferData.basicClientToken);
 
@@ -393,9 +393,9 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
 
   findAllSubFiles(directory, i, labelsArray) {
     this.globusService.getDirectory(directory[i],
-        this.selectedEndPoint.id, this.transferData.userAccessTokenData.other_tokens[0].access_token)
+        this.selectedEndPoint.id, this.transferData.userAccessTokenData)
         .pipe(flatMap(d => this.globusService.getInnerDirectories(d, this.selectedEndPoint.id,
-            this.transferData.userAccessTokenData.other_tokens[0].access_token)))
+            this.transferData.userAccessTokenData)))
         .subscribe(
             dir => {
               this.saveDirectories(dir, i, labelsArray);
@@ -546,7 +546,7 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
         this.listOfAllStorageIdentifiersPaths.push(data['data'][prop]);
       });
 
-      data = this.globusService.submitTransfer(this.transferData.userAccessTokenData.other_tokens[0].access_token);
+      data = this.globusService.submitTransfer(this.transferData.userAccessTokenData);
 
       console.log('my_func2');
       return data;
@@ -564,7 +564,7 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
             data['value'],
             this.selectedEndPoint.id,
             this.transferData.globusEndpoint,
-            this.transferData.userAccessTokenData.other_tokens[0].access_token);
+            this.transferData.userAccessTokenData);
 }
 
   writeToDataverse() {

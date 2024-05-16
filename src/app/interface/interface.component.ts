@@ -10,14 +10,10 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
+import PKCE from 'js-pkce';
 
-export interface Permissions {
-    DATA_TYPE: string;
-    principal_type: string;
-    principal: string;
-    path: string;
-    permissions: string;
-}
+
+
 
 @Component({
     selector: 'app-interface',
@@ -43,11 +39,17 @@ export class InterfaceComponent implements OnInit {
     languages: FormControl;
     langArray: Array<any> = [];
     signedUrlData: any;
+    PkceAuth: PKCE
 
     config: Config = (ConfigJson as any).default;
 
+
   constructor(private globusService: GlobusService,
               private translatePar: TranslateService) {
+
+      console.log(this.redirectURL);
+
+      console.log(this.PkceAuth);
 
       this.translate = translatePar;
       this.translate.addLangs(['en', 'fr']);
@@ -65,24 +67,40 @@ export class InterfaceComponent implements OnInit {
   dvLocale: string;
 
   ngOnInit(): void {
+
+      this.PkceAuth = new PKCE({
+          client_id: this.config.globusClientId ,  // Update this using your native client ID
+          redirect_uri: this.redirectURL,  // Update this if you are deploying this anywhere else (Globus Auth will redirect back here once you have logged in)
+          authorization_endpoint: 'https://auth.globus.org/v2/oauth2/authorize',  // No changes needed
+          token_endpoint: 'https://auth.globus.org/v2/oauth2/token',  // No changes needed
+          requested_scopes:   'urn:globus:auth:scope:transfer.api.globus.org:all'  // Update with any scopes you would need, e.g. transfer
+      });
+
         this.transferData = {} as TransferData;
         this.transferData.load = false;
         this.title = 'Globus';
         console.log(this.redirectURL);
 
         this.transferData.datasetDirectory = null;
-        this.transferData.basicClientToken = this.config.basicGlobusToken;
         this.transferData.globusEndpoint = this.config.globusEndpoint;
-        const code = this.globusService.getParameterByName('code');
-        const callback = this.globusService.getParameterByName('callback');
+        const code = this.globusService.getParameterByName('code',null);
+        const callback = this.globusService.getParameterByName('callback',null);
         console.log(callback);
         console.log(code);
-        const dvLocale = this.globusService.getParameterByName('dvLocale');
+        const dvLocale = this.globusService.getParameterByName('dvLocale',null);
+        console.log('Hello word');
         if (typeof callback !== 'undefined' && callback != null) {
+            console.log('Getting code');
           const code = this.getCode(callback, dvLocale);
+          console.log(console.log(this.PkceAuth));
         } else {
-            console.log('else');
-            this.getUserAccessToken(code);
+            console.log('Pkce');
+            console.log(this.PkceAuth);
+            const state = this.globusService.getParameterByName('state',null);
+            console.log(state);
+            const decodedState = this.decodeCallback(state);
+            console.log(decodedState);
+            this.getUserAccessToken(code, state);
 
         }
     }
@@ -106,30 +124,25 @@ export class InterfaceComponent implements OnInit {
         this.translate.use(language);
     }
 
-    getUserAccessToken(code) {
+    getUserAccessToken(code, state) {
         console.log(code);
-        const url = 'https://auth.globus.org/v2/oauth2/token?code=' + code + '&redirect_uri=' + this.redirectURL + '&grant_type=authorization_code';
+
+        const url = window.location.href;
         console.log(url);
-        const key = 'Basic ' + this.config.basicGlobusToken;
-        return this.globusService.postGlobus(url,  '', key)
-            /*----------------------*/
-            .subscribe(
-                data => {
-                    console.log('Data ');
-                    console.log(data);
-                    this.transferData.userAccessTokenData = data;
-                },
-                error => {
-                    console.log(error);
-                },
-                () => {
-                    this.getDataverseInformation();
-                });
+        const additionalParams = {state: state};
+        this.PkceAuth.exchangeForAccessToken(url).then((resp) => {
+            console.log(resp);
+            const token = resp.access_token;
+            console.log(token);
+            this.transferData.userAccessTokenData = token;
+            this.getDataverseInformation();
+            // Do stuff with the access token.
+        });
     }
 
     getDataverseInformation() {
         console.log( this.transferData.userAccessTokenData);
-        const state = this.globusService.getParameterByName('state');
+        const state = this.globusService.getParameterByName('state', null);
         console.log(state);
         if (state !== undefined) {
             const signedUrl = this.decodeCallback(state);
@@ -162,16 +175,18 @@ export class InterfaceComponent implements OnInit {
 
     getCode(callback, dvLocale) {
         const decodedCallback = this.decodeCallback(callback);
+        //const code_verifier = encodeURI(random(44, 'scoped:ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~'));
+        //console.log(code_verifier);
         let state = decodedCallback + '&dvLocale=' + dvLocale;
         state = btoa(state);
+        console.log(state);
         const scope = encodeURI('openid+email+profile+urn:globus:auth:scope:transfer.api.globus.org:all');
         const clientId = this.config.globusClientId;
         console.log(clientId);
-        let newUrl =  'https://auth.globus.org/v2/oauth2/authorize?client_id=' + clientId + '&response_type=code&' +
-            'scope=' + scope + '&state=' + state;
-        newUrl = newUrl + '&redirect_uri=' + this.redirectURL ;
 
-        const myWindows = window.location.replace(newUrl);
+        // const additionalParams = {state: state};
+        const additionalParams = {state: state};
+        const myWindows = window.location.replace(this.PkceAuth.authorizeUrl(additionalParams));
     }
     decodeCallback(callback) {
         const decodedCallback = atob(callback);

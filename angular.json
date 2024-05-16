@@ -13,6 +13,11 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+              "js-sha256",
+              "js-pkce"
+            ],
+          
             "outputPath": "dist/globus",
             "index": "src/index.html",
             "main": "src/main.ts",

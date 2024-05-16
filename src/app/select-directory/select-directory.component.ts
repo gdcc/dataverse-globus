@@ -63,7 +63,7 @@ export class SelectDirectoryComponent implements OnInit {
     const url = 'https://transfer.api.globusonline.org/v0.10/operation/endpoint/' + this.passingData.selectedEndPoint.id + '/ls?path=' +
         this.passingData.selectedDirectory;
     return this.globusService
-        .getGlobus(url, 'Bearer ' + this.passingData.dataTransfer.userAccessTokenData.other_tokens[0].access_token);
+        .getGlobus(url, 'Bearer ' + this.passingData.dataTransfer.userAccessTokenData);
   }
 
   processDirectories(data) {
@@ -81,7 +81,7 @@ export class SelectDirectoryComponent implements OnInit {
     const selectedDirectory = this.passingData.selectedDirectory + item.name + '/';
     this.globusService.getDirectory(selectedDirectory,
         this.passingData.selectedEndPoint.id,
-        this.passingData.dataTransfer.userAccessTokenData.other_tokens[0].access_token)
+        this.passingData.dataTransfer.userAccessTokenData)
         .subscribe(
             data => {
               console.log(data);
@@ -100,7 +100,7 @@ export class SelectDirectoryComponent implements OnInit {
 
     this.globusService.getDirectory(this.passingData.selectedDirectory,
         this.passingData.selectedEndPoint.id,
-        this.passingData.dataTransfer.userAccessTokenData.other_tokens[0].access_token)
+        this.passingData.dataTransfer.userAccessTokenData)
         .pipe(flatMap(data => this.upFolderProcess(data)))
         .subscribe(
             data => {
@@ -128,7 +128,7 @@ export class SelectDirectoryComponent implements OnInit {
       const path = temp.substr(0, temp.lastIndexOf('/')) + '/';
       return this.globusService.getDirectory(path,
           this.passingData.selectedEndPoint.id,
-          this.passingData.dataTransfer.userAccessTokenData.other_tokens[0].access_token);
+          this.passingData.dataTransfer.userAccessTokenData);
     } else {
       return of(null);
     }
