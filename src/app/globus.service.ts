@@ -89,16 +89,9 @@ export class GlobusService {
     };
     return this.http.post(url, body, httpOptions);
   }
-  getDataverse(url: string, key: string ) {
-    let httpOptions = {};
-    if (key !== 'null') {
-      httpOptions = {
-        // headers: new HttpHeaders({
-        //  'X-Dataverse-key': key
-        // })
-      };
-    }
-    return this.http.get(url,  httpOptions);
+  getDataverse(url: string ) {
+
+    return this.http.get(url);
   }
 
   getParameterByName(name, url) {

@@ -39,7 +39,7 @@ export class InterfaceComponent implements OnInit {
     languages: FormControl;
     langArray: Array<any> = [];
     signedUrlData: any;
-    PkceAuth: PKCE
+    PkceAuth: PKCE;
 
     config: Config = (ConfigJson as any).default;
 
@@ -73,7 +73,8 @@ export class InterfaceComponent implements OnInit {
           redirect_uri: this.redirectURL,  // Update this if you are deploying this anywhere else (Globus Auth will redirect back here once you have logged in)
           authorization_endpoint: 'https://auth.globus.org/v2/oauth2/authorize',  // No changes needed
           token_endpoint: 'https://auth.globus.org/v2/oauth2/token',  // No changes needed
-          requested_scopes:   'urn:globus:auth:scope:transfer.api.globus.org:all'  // Update with any scopes you would need, e.g. transfer
+          requested_scopes:  'urn:globus:auth:scope:transfer.api.globus.org:all openid email profile'
+          //'urn:globus:auth:scope:transfer.api.globus.org:all'  // Update with any scopes you would need, e.g. transfer
       });
 
         this.transferData = {} as TransferData;
@@ -132,7 +133,7 @@ export class InterfaceComponent implements OnInit {
         const additionalParams = {state: state};
         this.PkceAuth.exchangeForAccessToken(url).then((resp) => {
             console.log(resp);
-            const token = resp.access_token;
+            const token = resp;
             console.log(token);
             this.transferData.userAccessTokenData = token;
             this.getDataverseInformation();
@@ -149,7 +150,7 @@ export class InterfaceComponent implements OnInit {
             console.log(signedUrl);
             if (signedUrl != null) {
                 console.log('before call');
-                this.globusService.getDataverse(signedUrl, this.config.apiToken).subscribe({
+                this.globusService.getDataverse(signedUrl).subscribe({
                     next: (value: any) => {
                         this.signedUrlData = value,
                             console.log('Got value');

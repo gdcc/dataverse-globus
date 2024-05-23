@@ -58,7 +58,8 @@ export class EndpointTemplateComponent implements OnInit, OnChanges {
       console.log('typeTab');
       console.log(this.typeOfTab);
       if (this.typeOfTab === 0 || this.typeOfTab === 1) {
-        this.getPersonalConnect(this.transferData.userAccessTokenData)
+        console.log(this.transferData.userAccessTokenData.other_tokens[0].access_token);
+        this.getPersonalConnect(this.transferData.userAccessTokenData.other_tokens[0].access_token)
             .subscribe(
                 data => this.processPersonalConnect(data),
                 error => {
@@ -99,7 +100,7 @@ export class EndpointTemplateComponent implements OnInit, OnChanges {
     const array = new Array();
     for (const endPoint of this.transferData.referenceEndpointsWithPaths) {
       console.log(endPoint);
-      const userOtherAccessToken = this.transferData.userAccessTokenData;
+      const userOtherAccessToken = this.transferData.userAccessTokenData.other_tokens[0].access_token;
       // this.userAccessToken = userAccessTokenData.access_token;
       const url = 'https://transfer.api.globusonline.org/v0.10/endpoint/' + endPoint;
       console.log(url);
@@ -108,17 +109,17 @@ export class EndpointTemplateComponent implements OnInit, OnChanges {
     return array;
   }
 
-  getPersonalConnect(userAccessTokenData) {
+  getPersonalConnect(userAccessToken) {
     let url = '';
     if (this.typeOfTab === 0) {
       url = 'https://transfer.api.globusonline.org/v0.10/endpoint_search?filter_scope=my-gcp-endpoints';
     } else if (this.typeOfTab === 1) {
       url = 'https://transfer.api.globusonline.org/v0.10/endpoint_search?filter_scope=recently-used';
     }
-    const userOtherAccessToken = this.transferData.userAccessTokenData;
+    //const userOtherAccessToken = this.transferData.userAccessTokenData.other_tokens[0];
     // this.userAccessToken = userAccessTokenData.access_token;
     return this.globusService
-        .getGlobus(url, 'Bearer ' + userOtherAccessToken);
+        .getGlobus(url, 'Bearer ' + userAccessToken);
   }
 
   processPersonalConnect(data) {
