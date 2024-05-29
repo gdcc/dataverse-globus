@@ -7,9 +7,6 @@ import { filter, flatMap} from 'rxjs/operators';
 @Injectable()
 export class GlobusService {
 
-  userOtherAccessToken: string;
-  userAccessToken: string;
-
   constructor(private http: HttpClient) {
   }
 
@@ -33,7 +30,6 @@ export class GlobusService {
 
     };
     return this.http.put(url, body, httpOptions);
-    // return this.http.post(url,body, httpOptions);
   }
 
   deleteGlobus(url: string, key: string) {
@@ -67,18 +63,11 @@ export class GlobusService {
     // return this.http.post(url,body, httpOptions);
   }
 
-  postDataverse(url: string, body: FormData, key: string) {
+  postDataverse(url: string, body: FormData) {
     console.log(url);
     console.log(body);
-    console.log(key);
     let httpOptions = {};
-    if (key !== 'null') {
-      httpOptions = {
-        // headers: new HttpHeaders({
-         // 'Content-Type': 'application/json'
-        // })
-      };
-    }
+
     return this.http.post(url, body, httpOptions);
   }
   postSimpleDataverse(url: string, body: string) {
@@ -217,29 +206,6 @@ export class GlobusService {
     const bodyString = JSON.stringify(body);
     console.log(bodyString);
     return this.postGlobus(url, bodyString, 'Bearer ' + userOtherAccessToken);
-  }
-
-  saveDirectories(dir, listOfAllFiles, listOfFileNames, listOfAllStorageIdentifiers) {
-    console.log(dir);
-    for (const obj of dir["DATA"]) {
-      if (obj.type === 'file') {
-        console.log(obj);
-        if (dir["absolute_path"] == null || dir["absolute_path"] === 'null') {
-          listOfAllFiles.push(dir["path"] + obj.name);
-        } else {
-          listOfAllFiles.push(dir["absolute_path"] + obj.name);
-        }
-
-        listOfFileNames.push(obj.name);
-        // listOfAllStorageIdentifiers.push(this.generateStorageIdentifier());
-      }
-    }
-  }
-
-  deleteRule(accessId, endpointId, clientToken) {
-    const url = 'https://transfer.api.globusonline.org/v0.10/endpoint/' + endpointId + '/access/' + accessId;
-    const key = 'Bearer ' + clientToken.other_tokens[0].access_token;
-    return this.deleteGlobus(url, key);
   }
 
   ////////////////////////////////////////////////////////////////////////////////

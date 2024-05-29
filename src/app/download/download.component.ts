@@ -12,6 +12,7 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {SearchEndpointComponent} from '../search-endpoint/search-endpoint.component';
 import {PersonalConnectDownloadComponent} from '../personal-connect-download/personal-connect-download.component';
 import {RecentlyViewedDownloadComponent} from '../recently-viewed-download/recently-viewed-download.component';
+import {ReferencedComponent} from "../referenced/referenced.component";
 
 @Component({
   selector: 'app-download',
@@ -28,7 +29,8 @@ import {RecentlyViewedDownloadComponent} from '../recently-viewed-download/recen
     MatTabsModule,
     SearchEndpointComponent,
     PersonalConnectDownloadComponent,
-    RecentlyViewedDownloadComponent
+    RecentlyViewedDownloadComponent,
+    ReferencedComponent
   ],
   templateUrl: './download.component.html',
   styleUrls: ['./download.component.css']

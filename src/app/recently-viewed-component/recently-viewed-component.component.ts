@@ -50,34 +50,6 @@ export class RecentlyViewedComponentComponent implements OnChanges, OnInit {
     this.load = false;
   }
 
-
-  getRecentlyViewedEndpoints(userAccessTokenData) {
-    const url = 'https://transfer.api.globusonline.org/v0.10/endpoint_search?filter_scope=recently-used';
-    console.log(userAccessTokenData);
-    // this.userOtherAccessToken = userAccessTokenData.other_tokens[0].access_token;
-    // this.userAccessToken = userAccessTokenData.access_token;
-    return this.globusService
-        .getGlobus(url, 'Bearer ' + this.dataTransfer.userAccessTokenData);
-  }
-
-
-
-  processPersonalConnect(data) {
-
-    this.recentlyViewedEndpoints = new Array<object>();
-    console.log(data);
-    for (const obj of data.DATA) {
-        this.recentlyViewedEndpoints.push(obj);
-
-    }
-    if (this.recentlyViewedEndpoints.length === 0) {
-      console.log('Globus Connect Personal is not connected');
-    } else {
-      this.selectedEndPoint = this.recentlyViewedEndpoints[0];
-    }
-
-  }
-
   recentlyViewedExist() {
     return typeof this.recentlyViewedEndpoints !== 'undefined' && this.recentlyViewedEndpoints.length > 0;
   }

@@ -267,6 +267,7 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
           );
           if (indx === -1) {
             this.selectedFiles.push({fileNameObject: $event.options[0]._value, directory: this.selectedDirectory});
+            this.selectedOptions.push($event.options[0]._value);
           }
           console.log(this.selectedFiles);
         } else {
@@ -281,6 +282,13 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
           if (indx !== -1) {
             this.selectedFiles.splice(indx, 1);
             this.checkFlag = false;
+          }
+          const indx2 = this.selectedOptions.findIndex(x =>
+              x['type'] === $event.options[0]._value['type'] &&
+              x['name'] === $event.options[0]._value['name']
+          );
+          if (indx2 !== -1) {
+            this.selectedOptions.splice(indx, 1);
           }
         }
       }
@@ -342,10 +350,17 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
       console.log(indx);
       if (indx !== -1) {
         this.selectedFiles.splice(indx, 1);
-        const indx2 = selectedList._value.indexOf(file);
+        console.log(file.fileNameObject);
+        console.log(this.selectedOptions);
+        const indx2 = this.selectedOptions.indexOf(file.fileNameObject);
+        console.log(indx2);
+        //const indx2 = selectedList._value.indexOf(file);
         if (indx2 !== -1) {
           console.log('Hello');
-          selectedList._value.splice(indx2);
+          this.selectedOptions.splice(indx2, 1);
+
+          selectedList.writeValue(this.selectedOptions);
+          //selectedList._value.splice(indx2);
           this.checkFlag = false;
         }
       }
@@ -627,7 +642,7 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
       }
     }
     console.log(url);
-    this.globusService.postDataverse(url, formData, this.transferData.key)
+    this.globusService.postDataverse(url, formData)
         .subscribe(
             data => {
               console.log(data);

@@ -69,7 +69,7 @@ export class SearchEndpointComponent implements OnInit, AfterViewInit, OnChanges
     this.loaded = false;
 
     if (typeof this.dataTransfer.userAccessTokenData !== 'undefined') {
-      this.getEndpoints(this.dataTransfer.userAccessTokenData, value)
+      this.getEndpoints(this.dataTransfer.userAccessTokenData.other_tokens[0].access_token, value)
           .subscribe(
               data => {
                 console.log(data);
@@ -91,7 +91,7 @@ export class SearchEndpointComponent implements OnInit, AfterViewInit, OnChanges
     // this.userOtherAccessToken = userAccessTokenData.other_tokens[0].access_token;
     // this.userAccessToken = userAccessTokenData.access_token;
     return this.globusService
-        .getGlobus(url, 'Bearer ' + this.dataTransfer.userAccessTokenData);
+        .getGlobus(url, 'Bearer ' + userAccessTokenData);
   }
 
   getDisplayedColumns() {

@@ -83,7 +83,6 @@ export class InterfaceComponent implements OnInit {
         console.log(this.redirectURL);
 
         this.transferData.datasetDirectory = null;
-        this.transferData.globusEndpoint = this.config.globusEndpoint;
         const code = this.globusService.getParameterByName('code',null);
         const callback = this.globusService.getParameterByName('callback',null);
         console.log(callback);
@@ -181,7 +180,6 @@ export class InterfaceComponent implements OnInit {
         let state = decodedCallback + '&dvLocale=' + dvLocale;
         state = btoa(state);
         console.log(state);
-        const scope = encodeURI('openid+email+profile+urn:globus:auth:scope:transfer.api.globus.org:all');
         const clientId = this.config.globusClientId;
         console.log(clientId);
 
@@ -213,12 +211,13 @@ export class InterfaceComponent implements OnInit {
         // this.transferData.key = this.config.apiToken;
         console.log(parameters.managed);
         console.log(this.transferData.managed);
-        if (parameters.managed === 'true') {
+        if ( typeof parameters.managed !== 'undefined' && parameters.managed === 'true') {
             this.transferData.managed = true;
             this.transferData.globusEndpoint = parameters.endpoint;
             console.log(this.transferData.globusEndpoint);
         } else {
             this.transferData.managed = false;
+
             this.transferData.referenceEndpointsWithPaths = parameters.referenceEndpointsWithPaths;
             console.log(this.transferData.referenceEndpointsWithPaths);
         }
@@ -227,6 +226,9 @@ export class InterfaceComponent implements OnInit {
             console.log(parameters.files);
             this.transferData.files = parameters.files;
         }
+        console.log(this.transferData);
+        console.log("END PARAMETERS")
+
 
     }
 

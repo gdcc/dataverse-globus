@@ -33,6 +33,7 @@ import { DownloadFileComponent } from './download-file/download-file.component';
 import { EndpointTemplateComponent } from './endpoint-template/endpoint-template.component';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatCardModule} from '@angular/material/card';
+import {CustomSnackbarComponent} from "./custom-snackbar/custom-snackbar.component";
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http);

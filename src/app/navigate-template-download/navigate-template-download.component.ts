@@ -17,10 +17,11 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatListModule} from '@angular/material/list';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatSnackBar, MatSnackBarConfig} from '@angular/material/snack-bar';
 import {MatInput} from '@angular/material/input';
 import {CdkFixedSizeVirtualScroll, CdkVirtualScrollViewport} from '@angular/cdk/scrolling';
 import {SelFilesType} from '../navigate-template/navigate-template.component';
+import { CustomSnackbarComponent } from '../custom-snackbar/custom-snackbar.component';
 
 export interface PassingDataSelectType {
   dataTransfer: TransferData;
@@ -107,6 +108,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   }
 
   startComponent() {
+    console.log(this.selectedEndPoint);
     console.log(this.type);
     console.log(this.transferData);
     this.ruleId = null;
@@ -120,7 +122,9 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
       this.selectedDirectory = this.selectedEndPoint.default_directory;
       console.log(this.selectedEndPoint);
     }
-    if (typeof this.transferData.userAccessTokenData !== 'undefined' && typeof this.transferData.globusEndpoint !== 'undefined') {
+
+    if (typeof this.transferData.userAccessTokenData !== 'undefined' &&
+        (typeof this.transferData.globusEndpoint !== 'undefined' || !this.transferData.managed)) {
 
       this.findDirectories()
           .subscribe(
@@ -296,7 +300,10 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
     console.log($event);
     console.log(directory);
     if ($event.checked) {
+
+      console.log('Select all!!!!!!!');
       for (const obj of this.personalDirectories) {
+        console.log(obj);
         this.selectedOptions.push(obj);
 
        // const file: SelFilesType = {fileNameObject: obj, directory: this.selectedDirectory };
@@ -316,11 +323,11 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
       this.checkFlag = false;
       for (const obj of this.personalDirectories) {
 
-        const file: SelFilesType = {fileNameObject: obj, directory: this.selectedDirectory};
+        //const file: SelFilesType = {fileNameObject: obj, directory: this.selectedDirectory};
         console.log(this.selectedFiles);
-        console.log(file.fileNameObject);
+        //console.log(file.fileNameObject);
         const indx = this.selectedFiles.findIndex(x =>
-            x['name'] === file.fileNameObject['name']
+            x['name'] === obj['name']
         );
         console.log('Remove');
         console.log(indx);
@@ -348,12 +355,12 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
         // const file: SelFilesType = {fileNameObject: $event.option._value, directory: this.selectedDirectory };
         if ($event.options[0]._selected) {
           console.log(this.selectedFiles);
-          const indx = this.selectedFiles.findIndex(x =>
-              x['name'] === $event.options[0]._value.name
-          );
+          const indx = this.selectedFiles.indexOf($event.options[0]._value);
           console.log(indx);
           if ( indx === -1) {
+            console.log($event.options[0]._value);
             this.selectedFiles.push($event.options[0]._value);
+            this.selectedOptions.push($event.options[0]._value)
           }
         } else {
           /*const indx = this.selectedFiles.indexOf($event.option._value);
@@ -380,12 +387,16 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   }
 
   onRemoving($event, selectedList) {
+    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     console.log($event);
     if ($event[0]._selected) {
       const indx = this.selectedFiles.indexOf($event[0]._value);
+      console.log(indx);
       if ( indx !== -1) {
         this.selectedFiles.splice(indx, 1);
-        const indx2 = this.selectedOptions.indexOf($event[0]._value.name);
+        console.log(this.selectedOptions);
+        const indx2 = this.selectedOptions.indexOf($event[0]._value);
+        console.log(indx2);
         if (indx2 !== -1) {
           this.selectedOptions.splice(indx2, 1);
           selectedList.writeValue(this.selectedOptions);
@@ -525,6 +536,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
     }
     return this.globusService.postSimpleDataverse(urlPath, json_data);
   }
+
   onSubmitTransfer() {
     this.listOfAllFiles = new Array<object>();
     this.listOfAllPaths = new Array<string>();
@@ -569,10 +581,16 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
               () => {
                 console.log('Transfer submitted');
 
-                // this.removeRule();
-                this.snackBar.open('The transfer was submitted', '', {
+                let snackBarRef = this.snackBar.open('The transfer was submitted', '', {
                   duration: 3000
                 });
+
+                snackBarRef.afterDismissed().subscribe(() => {
+                  this.snackBar.openFromComponent(CustomSnackbarComponent, {
+                    duration: 5000
+                  });
+                });
+
               }
           );
     }
@@ -611,22 +629,6 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
         );
   }
 
-  removeRule() {
-    console.log(this.ruleId);
-    if (this.ruleId !== null && this.clientToken !== null && typeof this.ruleId !== 'undefined') {
-      this.globusService.deleteRule(this.ruleId, this.transferData.globusEndpoint, this.clientToken)
-          .subscribe(
-              data => {
-              },
-              error => {
-                console.log(error);
-              },
-              () => {
-                console.log('Rule deleted');
-              }
-          );
-    }
-  }
 
   preparedForTransfer() {
     if (this.selectedFiles.length > 0) {
