@@ -130,5 +130,3 @@ For dataverse-globus to work with Dataverse the following jvm options should be 
 -Ddataverse.files.\<storage-alias\>.reference-endpoints-with-basepaths=\<List of globus and points separated by coma\>
 
 -Ddataverse.files.\<storage-alias\>.globus-token=\<Globus basic token\> It is base64 encoded client ID and secret, separated by a single colon.
-
-
