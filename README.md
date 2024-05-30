@@ -83,36 +83,36 @@ You should have compiled source in dist directory. Copy dataverse-globus/dist in
 
 For dataverse-globus to work with Dataverse the following jvm options should be created:
 
-For S3 managed:
+## For S3 managed:
 
 -Ddataverse.files.storage-driver-id=\<storage-alias\>
 
--Ddataverse.files.s3.bucket-name=\<backet-name-in-S3\>
+-Ddataverse.files.\<storage-alias\>.bucket-name=\<backet-name-in-S3\>
 
--Ddataverse.files.s3.path-style-access=true
+-Ddataverse.files.\<storage-alias\>.path-style-access=true
 
--Ddataverse.files.s3.custom-endpoint-url=\<URL-of-S3\>
+-Ddataverse.files.\<storage-alias\>.custom-endpoint-url=\<URL-of-S3\>
 
--Ddataverse.files.s3.custom-endpoint-region=us-east-1
+-Ddataverse.files.\<storage-alias\>.custom-endpoint-region=us-east-1
 
--Ddataverse.files.s3.type=s3
+-Ddataverse.files.\<storage-alias\>.type=s3
 
--Ddataverse.files.s3.label=\<Label-for-storage\>
+-Ddataverse.files.\<storage-alias\>.label=\<Label-for-storage\>
 
--Ddataverse.files.s3.transfer-endpoint-with-basepath=\<S3 endpoint\>
+-Ddataverse.files.\<storage-alias\>.transfer-endpoint-with-basepath=\<S3 endpoint\>
 
--Ddataverse.files.s3.globus-transfer-endpoint-with-basepath=\<S3 endpoint\>
+-Ddataverse.files.\<storage-alias\>.globus-transfer-endpoint-with-basepath=\<S3 endpoint\>
 
--Ddataverse.files.s3.download-redirect=true
+-Ddataverse.files.\<storage-alias\>.download-redirect=true
 
--Ddataverse.files.s3.files-not-accessible-by-dataverse=false
+-Ddataverse.files.\<storage-alias\>.files-not-accessible-by-dataverse=false
 
--Ddataverse.files.s3.managed=true
+-Ddataverse.files.\<storage-alias\>.managed=true
 
--Ddataverse.files.s3.globus-token=\<Globus basic token\> It is base64 encoded client ID and secret, separated by a single colon.
+-Ddataverse.files.\<storage-alias\>.globus-token=\<Globus basic token\> It is base64 encoded client ID and secret, separated by a single colon.
 
--Ddataverse.files.s3.upload-redirect=true
+-Ddataverse.files.\<storage-alias\>.upload-redirect=true
 
-For referenced endpoint:
+## For referenced endpoint:
 
 
