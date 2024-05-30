@@ -44,10 +44,6 @@ export class NavigateDirectoriesComponent implements OnInit {
 
 
   ngOnInit(): void {
-    console.log("Data action");
-    console.log(this.data.action);
-    console.log(this.data);
-  //  this.selectedEndPont = this.data;
     this.selectedEndPoint = this.data.data;
   }
 

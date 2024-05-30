@@ -70,8 +70,6 @@ export class UploadComponent implements OnInit {
 
   ifLoaded(dataTransfer: TransferData) {
     this.dataTransfer = dataTransfer;
-    console.log(this.dataTransfer);
-    console.log('Loaded!!!');
   }
 
 }

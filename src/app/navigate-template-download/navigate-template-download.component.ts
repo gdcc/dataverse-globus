@@ -97,7 +97,6 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
       this.selectedDirectory = '/~/';
     } else {
       this.selectedDirectory = this.selectedEndPoint.default_directory;
-      console.log(this.selectedEndPoint);
     }
     // Not needed - ngOnChanges is called prior to ngOnInit
     // this.startComponent();
@@ -108,9 +107,6 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   }
 
   startComponent() {
-    console.log(this.selectedEndPoint);
-    console.log(this.type);
-    console.log(this.transferData);
     this.ruleId = null;
     this.clientToken = null;
     this.selectedFiles = new Array<object>();
@@ -120,7 +116,6 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
       this.selectedDirectory = '~/';
     } else {
       this.selectedDirectory = this.selectedEndPoint.default_directory;
-      console.log(this.selectedEndPoint);
     }
 
     if (typeof this.transferData.userAccessTokenData !== 'undefined' &&
@@ -142,7 +137,6 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
                           this.loaded = true;
                         },
                         () => {
-                          console.log(this.checkFlag);
                           this.accessEndpointFlag = true;
                           this.loaded = true;
                         }
@@ -153,7 +147,6 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   }
   processDirectoriesToDownload(data) {
     this.downloadToDirectories = new Array<object>();
-    console.log(data.path);
     this.selectedDirectory = data.path;
     for (const obj of data.DATA) {
       if (obj.type === 'dir') {
@@ -171,38 +164,28 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   }
 
   findDirectories() {
-    console.log(this.transferData.siteUrl);
     let urlPath = '';
     if (this.type !== 2) {
       for (const urlObject of this.transferData.signedUrls) {
-        // console.log(urlObject);
         if (urlObject['name'] === 'getFileListing') {
           urlPath = urlObject['signedUrl'];
           break;
         }
       }
-      console.log(urlPath);
       return this.globusService.getDataverse(urlPath);
     } else {
       return of();
     }
   }
   processDirectories(data) {
-    console.log(data);
     if (this.type !== 2) {
-      console.log(data.data);
       this.files = new Array<string>();
       this.paths = new Array<object>();
       this.storageIdentifiers = new Array<string>();
       this.allDataFiles = new Array<any>();
       for (const obj of data.data) {
-        console.log("PROCESS DIRECTORIES!!!");
-        console.log(obj);
-        console.log(this.transferData.files);
-        console.log(this.transferData['files']);
         for (const f in this.transferData.files) {
           if (obj.dataFile.id == f) {
-            console.log(this.transferData.files[f]);
             if (typeof obj.directoryLabel !== 'undefined') {
               const fullFile = obj.directoryLabel + '/' + obj.label;
               this.files.push(fullFile);
@@ -211,39 +194,26 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
               this.files.push(obj.label);
               this.paths.push(obj.label.split('/'));
             }
-            console.log(obj.dataFile.storageIdentifier);
-            console.log(obj.dataFile.storageIdentifier.split(':').pop());
+
             if (this.transferData.managed) {
               // this.storageIdentifiers.push(obj.dataFile.storageIdentifier.split(':')[2]);
               this.storageIdentifiers.push(obj.dataFile.storageIdentifier.split(':').pop());
             } else {
               const ind =  this.transferData.files[f].indexOf('/');
               this.transferData.globusEndpoint = this.transferData.files[f].substring(0, ind);
-              console.log(obj.dataFile.storageIdentifier);
 
-
-              // let temp = obj.dataFile.storageIdentifier.split(':')[1];
               let temp = obj.dataFile.storageIdentifier.split('//').pop();
-              console.log(temp);
-              // const value = this.transferData.files[f];
-              // this.transferData.globusEndpoint = value.substring(value.indexOf('/'));
-              // console.log(this.transferData.globusEndpoint);
-              // temp = temp.split('//')[2];
               const index = temp.indexOf('/');
 
               temp = temp.substring(index);
-              console.log(temp);
               this.storageIdentifiers.push(temp);
             }
             this.allDataFiles.push(obj.dataFile);
           }
         }
       }
-      console.log(this.files);
-      console.log(this.paths);
       this.personalDirectories = this.arrangeIntoTree(this.paths);
       this.tree = this.personalDirectories;
-      console.log(JSON.stringify(this.personalDirectories, null, 4));
       this.levels = new Stack<object>();
       this.selectedOptions = new Array<object>();
     }
@@ -256,7 +226,6 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
       const path = paths[i];
       let currentLevel = tree;
       const storageId = this.storageIdentifiers[i];
-      console.log(this.allDataFiles[i]);
       const fileId = this.allDataFiles[i].id;
       for (let j = 0; j < path.length; j++) {
         const part = path[j];
@@ -297,21 +266,11 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
 
   selectAll($event, directory) {
     this.checkFlag = false;
-    console.log($event);
-    console.log(directory);
     if ($event.checked) {
-
-      console.log('Select all!!!!!!!');
       for (const obj of this.personalDirectories) {
-        console.log(obj);
         this.selectedOptions.push(obj);
-
-       // const file: SelFilesType = {fileNameObject: obj, directory: this.selectedDirectory };
-        console.log(obj);
-        console.log(this.selectedFiles);
         const indx = this.selectedFiles.findIndex(x =>
             x['name'] === obj.name        );
-        console.log(indx);
         if ( indx === -1) {
           this.selectedFiles.push(obj);
         }
@@ -319,54 +278,33 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
       this.checkFlag = true;
       directory.writeValue(this.personalDirectories);
     } else {
-      console.log("Deselecting");
       this.checkFlag = false;
       for (const obj of this.personalDirectories) {
 
-        //const file: SelFilesType = {fileNameObject: obj, directory: this.selectedDirectory};
-        console.log(this.selectedFiles);
-        //console.log(file.fileNameObject);
         const indx = this.selectedFiles.findIndex(x =>
             x['name'] === obj['name']
         );
-        console.log('Remove');
-        console.log(indx);
         if (indx !== -1) {
           this.selectedFiles.splice(indx, 1);
         }
       }
-     /* for (const obj of this.personalDirectories) {
-        const indx = this.selectedFiles.indexOf(obj);
-        if (indx !== -1) {
-          this.selectedFiles.splice(indx, 1);
-        }
-      }*/
+
       this.selectedOptions = new Array<object>();
       directory.writeValue(this.selectedOptions);
     }
   }
 
   onSelection($event) {
-    console.log($event);
     this.isSingleClick = true;
     setTimeout(() => {
       if (this.isSingleClick ){
-
-        // const file: SelFilesType = {fileNameObject: $event.option._value, directory: this.selectedDirectory };
         if ($event.options[0]._selected) {
-          console.log(this.selectedFiles);
           const indx = this.selectedFiles.indexOf($event.options[0]._value);
-          console.log(indx);
           if ( indx === -1) {
-            console.log($event.options[0]._value);
             this.selectedFiles.push($event.options[0]._value);
             this.selectedOptions.push($event.options[0]._value)
           }
         } else {
-          /*const indx = this.selectedFiles.indexOf($event.option._value);
-          if ( indx !== -1) {
-            this.selectedFiles.splice(indx, 1);
-          }*/
           this.checkFlag = false;
         }
       }
@@ -387,16 +325,11 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   }
 
   onRemoving($event, selectedList) {
-    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    console.log($event);
     if ($event[0]._selected) {
       const indx = this.selectedFiles.indexOf($event[0]._value);
-      console.log(indx);
       if ( indx !== -1) {
         this.selectedFiles.splice(indx, 1);
-        console.log(this.selectedOptions);
         const indx2 = this.selectedOptions.indexOf($event[0]._value);
-        console.log(indx2);
         if (indx2 !== -1) {
           this.selectedOptions.splice(indx2, 1);
           selectedList.writeValue(this.selectedOptions);
@@ -407,9 +340,6 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   }
 
   isFolder(file) {
-    console.log(this.personalDirectories);
-    console.log(this.selectedFiles);
-    console.log(file);
     if (file.children.length > 0) {
       return true;
     } else {
@@ -419,7 +349,6 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
 
   UpOneFolder() {
     const up = this.levels.pop();
-    console.log(up);
     if (typeof up !== 'undefined') {
       this.personalDirectories = up;
       this.checkFlag = false;
@@ -447,8 +376,6 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
         );
   }
   upFolderProcess(data) {
-    console.log(data);
-    // let absolutePath = data.absolute_path;
     let absolutePath = data['path'];
     if (data.absolute_path == null || data.absolute_path === 'null') {
       absolutePath = data.absolute_path;
@@ -464,11 +391,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
     }
   }
   openDirectoryDownload($event, item) {
-    console.log(item);
-    console.log($event);
-    console.log(item.name);
     this.selectedDirectory = this.selectedDirectory + item.name + '/';
-    console.log(this.selectedDirectory);
     this.getDownloadingToDirectories()
         .subscribe(
             data => this.processDirectoriesToDownload(data),
@@ -476,7 +399,6 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
               console.log(error);
             },
             () => {
-              console.log(this.downloadToDirectories);
             }
         );
   }
@@ -484,7 +406,6 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   openDirectory($event, item, directory, check) {
     this.isSingleClick = false;
     this.selectedOptions = new Array<object>();
-    console.log(directory);
     this.selectedOptions = new Array<object>();
     if (item.children.length > 0) {
       this.levels.push(this.personalDirectories);
@@ -496,10 +417,8 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
     }
   }
   findChildren(array, path) {
-    console.log(array);
     for (const obj of array ) {
       if (obj.children.length === 0) {
-        console.log(obj);
         this.listOfAllFiles.push(obj);
         this.listOfAllPaths.push(path);
       } else {
@@ -508,15 +427,12 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
     }
   }
   askRequestDownload(data) {
-    console.log(data);
     const user = data[0];
-    console.log(user);
     let json_data = '{ ' +
         '"principal":"' + user['sub'] + '",' +
         '"fileIds":[';
     let i = 0;
     for (const f of this.selectedFiles) {
-      console.log(f);
       if (i > 0) {
         json_data = json_data + ',';
       }
@@ -524,11 +440,9 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
       i++;
     }
     json_data = json_data + ']}';
-    console.log(json_data);
     // curl -H "X-Dataverse-key:$API_TOKEN" -H "Content-type:application/json" -X POST -d "$JSON_DATA" "$SERVER_URL/api/datasets/:persistentId/requestGlobusDownload?persistentId=$PERSISTENT_IDENTIFIER"
     let urlPath = null;
     for (const urlObject of this.transferData.signedUrls) {
-      console.log(urlObject);
       if (/*this.transferData.managed &&*/ urlObject['name'] === 'requestGlobusDownload') {
         urlPath = urlObject['signedUrl'];
         break;
@@ -552,11 +466,9 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
       if (this.transferData.managed) {
         sourceDatasetDirectory = this.transferData.datasetDirectory;
       }
-      console.log(this.selectedDirectory);
       forkJoin(array)
           .pipe(flatMap(data => this.askRequestDownload(data)))
           .pipe(flatMap(data => {
-            console.log(data);
             return this.globusService.submitTransfer(this.transferData.userAccessTokenData.other_tokens[0].access_token);
           } ))
           .pipe(flatMap(data => this.globusService.submitTransferToUser(
@@ -565,7 +477,6 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
               this.transferData.userAccessTokenData.other_tokens[0].access_token)))
           .subscribe(
               data => {
-                console.log(data);
                 this.taskId = data['task_id'];
                 if (this.transferData.managed) {
                   this.writeToDataverse(this.taskId);
@@ -573,7 +484,6 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
               },
               error => {
                 console.log(error);
-                // this.removeRule();
                 this.snackBar.open('There was an error in transfer submission. BIIG ', '', {
                   duration: 3000
                 });
@@ -587,6 +497,8 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
 
                 snackBarRef.afterDismissed().subscribe(() => {
                   this.snackBar.openFromComponent(CustomSnackbarComponent, {
+                    data: ['Large transfers may take significant time. You can check transfer status at',
+                    'https://app.globus.org/activity'],
                     duration: 5000
                   });
                 });
@@ -597,14 +509,11 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   }
 
   writeToDataverse(task_id) {
-    console.log(task_id);
     let json_data = '{ ' +
         '"taskIdentifier":"' + task_id + '"';
     json_data = json_data + '}';
-    console.log(json_data);
     let urlPath = null;
     for (const urlObject of this.transferData.signedUrls) {
-      console.log(urlObject);
       if (this.transferData.managed && urlObject['name'] === 'monitorGlobusDownload') {
         urlPath = urlObject['signedUrl'];
         break;
@@ -613,18 +522,15 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
     this.globusService.postSimpleDataverse(urlPath, json_data)
         .subscribe(
             data => {
-              console.log(data);
             },
             error => {
               console.log(error);
-              // this.removeRule();
+
               this.snackBar.open('There was an error in transfer submission. ', '', {
                 duration: 3000
               });
             },
             () => {
-              console.log('Submitted to dataverse');
-              // this.removeRule();
             }
         );
   }
@@ -652,22 +558,18 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
 
     const sub = this.dialogRef.componentInstance.updateSelectedDirectoryEvent.subscribe((x) => {
       this.selectedDirectory = x;
-      console.log(x);
     });
   }
   setDirectory(directory) {
     this.selectedDirectory = directory;
   }
   searchDirectory(directory) {
-    console.log("Start search");
     this.selectedDirectory = directory;
-    console.log(this.selectedDirectory);
     this.globusService.getDirectory(this.selectedDirectory,
         this.selectedEndPoint.id,
         this.transferData.userAccessTokenData.other_tokens[0].access_token)
         .subscribe(
             data => {
-              console.log(data);
               this.processDirectoriesToDownload(data);
             },
             error => {

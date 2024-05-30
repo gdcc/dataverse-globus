@@ -46,11 +46,6 @@ export class InterfaceComponent implements OnInit {
 
   constructor(private globusService: GlobusService,
               private translatePar: TranslateService) {
-
-      console.log(this.redirectURL);
-
-      console.log(this.PkceAuth);
-
       this.translate = translatePar;
       this.translate.addLangs(['en', 'fr']);
       this.translate.setDefaultLang('en');
@@ -80,26 +75,17 @@ export class InterfaceComponent implements OnInit {
         this.transferData = {} as TransferData;
         this.transferData.load = false;
         this.title = 'Globus';
-        console.log(this.redirectURL);
 
         this.transferData.datasetDirectory = null;
         const code = this.globusService.getParameterByName('code',null);
         const callback = this.globusService.getParameterByName('callback',null);
-        console.log(callback);
-        console.log(code);
         const dvLocale = this.globusService.getParameterByName('dvLocale',null);
-        console.log('Hello word');
+
         if (typeof callback !== 'undefined' && callback != null) {
-            console.log('Getting code');
           const code = this.getCode(callback, dvLocale);
-          console.log(console.log(this.PkceAuth));
         } else {
-            console.log('Pkce');
-            console.log(this.PkceAuth);
             const state = this.globusService.getParameterByName('state',null);
-            console.log(state);
             const decodedState = this.decodeCallback(state);
-            console.log(decodedState);
             this.getUserAccessToken(code, state);
 
         }
@@ -125,15 +111,10 @@ export class InterfaceComponent implements OnInit {
     }
 
     getUserAccessToken(code, state) {
-        console.log(code);
-
         const url = window.location.href;
-        console.log(url);
         const additionalParams = {state: state};
         this.PkceAuth.exchangeForAccessToken(url).then((resp) => {
-            console.log(resp);
             const token = resp;
-            console.log(token);
             this.transferData.userAccessTokenData = token;
             this.getDataverseInformation();
             // Do stuff with the access token.
@@ -141,30 +122,21 @@ export class InterfaceComponent implements OnInit {
     }
 
     getDataverseInformation() {
-        console.log( this.transferData.userAccessTokenData);
         const state = this.globusService.getParameterByName('state', null);
-        console.log(state);
         if (state !== undefined) {
             const signedUrl = this.decodeCallback(state);
-            console.log(signedUrl);
             if (signedUrl != null) {
-                console.log('before call');
                 this.globusService.getDataverse(signedUrl).subscribe({
                     next: (value: any) => {
-                        this.signedUrlData = value,
-                            console.log('Got value');
-                        console.log(this.signedUrlData);
+                        this.signedUrlData = value;
                     },
                     error: (error: any) => {
                         console.log(error);
                     },
                     complete: () => {
-                        console.log(this.signedUrlData);
-                        // this.newItemEvent.emit(this.signedUrlData["data"]);
                         this.getParameters(this.signedUrlData["data"]['queryParameters']);
                         this.transferData.signedUrls = this.signedUrlData['data']['signedUrls'];
                         this.transferData.load = true;
-                        console.log('It is true');
                         this.newItemEvent.emit(this.transferData);
                     }
                 });
@@ -175,61 +147,39 @@ export class InterfaceComponent implements OnInit {
 
     getCode(callback, dvLocale) {
         const decodedCallback = this.decodeCallback(callback);
-        //const code_verifier = encodeURI(random(44, 'scoped:ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~'));
-        //console.log(code_verifier);
         let state = decodedCallback + '&dvLocale=' + dvLocale;
         state = btoa(state);
-        console.log(state);
         const clientId = this.config.globusClientId;
-        console.log(clientId);
 
-        // const additionalParams = {state: state};
         const additionalParams = {state: state};
         const myWindows = window.location.replace(this.PkceAuth.authorizeUrl(additionalParams));
     }
     decodeCallback(callback) {
         const decodedCallback = atob(callback);
-        console.log(decodedCallback);
         return decodedCallback;
     }
 
     getParameters(parameters) {
-        console.log(parameters);
         this.transferData.datasetPid = parameters.datasetPid;
         // this.transferData.key = this.globusService.getParameterByName('apiToken');
         this.transferData.siteUrl = parameters.siteUrl;
-        console.log(this.transferData.siteUrl);
         this.transferData.datasetId = parameters.datasetId;
         this.transferData.datasetVersion = parameters.datasetVersion;
-        // this.transferData.fileId = this.globusService.getParameterByName('fileId');
-        // this.transferData.fileMetadataId = this.globusService.getParameterByName('fileMetadataId');
-        // this.transferData.storePrefix = this.globusService.getParameterByName('storePrefix');
-        console.log(this.transferData);
+
         this.transferData.datasetDirectory = '/' +
             this.transferData.datasetPid.substring(this.transferData.datasetPid.indexOf(':') + 1) + '/';
-        console.log(this.transferData.datasetDirectory);
-        // this.transferData.key = this.config.apiToken;
-        console.log(parameters.managed);
-        console.log(this.transferData.managed);
+
         if ( typeof parameters.managed !== 'undefined' && parameters.managed === 'true') {
             this.transferData.managed = true;
             this.transferData.globusEndpoint = parameters.endpoint;
-            console.log(this.transferData.globusEndpoint);
+
         } else {
             this.transferData.managed = false;
-
             this.transferData.referenceEndpointsWithPaths = parameters.referenceEndpointsWithPaths;
-            console.log(this.transferData.referenceEndpointsWithPaths);
         }
         if (typeof parameters.files !== 'undefined' || parameters.files !== null) {
-            console.log("FOUND FILES!!!");
-            console.log(parameters.files);
             this.transferData.files = parameters.files;
         }
-        console.log(this.transferData);
-        console.log("END PARAMETERS")
-
-
     }
 
 }

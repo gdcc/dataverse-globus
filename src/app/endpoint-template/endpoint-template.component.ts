@@ -44,21 +44,15 @@ export class EndpointTemplateComponent implements OnInit, OnChanges {
   load: boolean;
 
   ngOnInit(): void {
-    console.log('hello');
     this.load = false;
-    console.log(this.personalConnectEndpoints);
-
   }
 
   ngOnChanges() {
-    console.log(this.personalConnectEndpoints);
-    console.log('Changes');
+
     this.personalConnectEndpoints = new Array<object>();
     if (typeof this.transferData.userAccessTokenData !== 'undefined') {
-      console.log('typeTab');
-      console.log(this.typeOfTab);
+
       if (this.typeOfTab === 0 || this.typeOfTab === 1) {
-        console.log(this.transferData.userAccessTokenData.other_tokens[0].access_token);
         this.getPersonalConnect(this.transferData.userAccessTokenData.other_tokens[0].access_token)
             .subscribe(
                 data => this.processPersonalConnect(data),
@@ -75,11 +69,10 @@ export class EndpointTemplateComponent implements OnInit, OnChanges {
                 }
             );
       } else {
-        console.log('Referenced');
+        //referenced
         const endpoitsObsevables = this.getAllEndpoints();
         forkJoin(endpoitsObsevables)
             .subscribe(obj => {
-                  console.log(obj);
                   this.processPersonalConnect(obj);
                 },
                 error => {
@@ -99,11 +92,8 @@ export class EndpointTemplateComponent implements OnInit, OnChanges {
   getAllEndpoints() {
     const array = new Array();
     for (const endPoint of this.transferData.referenceEndpointsWithPaths) {
-      console.log(endPoint);
       const userOtherAccessToken = this.transferData.userAccessTokenData.other_tokens[0].access_token;
-      // this.userAccessToken = userAccessTokenData.access_token;
       const url = 'https://transfer.api.globusonline.org/v0.10/endpoint/' + endPoint;
-      console.log(url);
       array.push(this.globusService.getGlobus(url, 'Bearer ' + userOtherAccessToken));
     }
     return array;
@@ -116,32 +106,26 @@ export class EndpointTemplateComponent implements OnInit, OnChanges {
     } else if (this.typeOfTab === 1) {
       url = 'https://transfer.api.globusonline.org/v0.10/endpoint_search?filter_scope=recently-used';
     }
-    //const userOtherAccessToken = this.transferData.userAccessTokenData.other_tokens[0];
-    // this.userAccessToken = userAccessTokenData.access_token;
+
     return this.globusService
         .getGlobus(url, 'Bearer ' + userAccessToken);
   }
 
   processPersonalConnect(data) {
-    console.log(data);
     this.personalConnectEndpoints = new Array<object>();
     if (this.typeOfTab === 0) {
       for (const obj of data.DATA) {
         if (obj.gcp_connected) {
           this.personalConnectEndpoints.push(obj);
-          console.log(obj);
         }
       }
     } else if (this.typeOfTab === 1) {
       for (const obj of data.DATA) {
         this.personalConnectEndpoints.push(obj);
-        console.log(obj);
       }
     } else {
-      console.log(data);
       for (const obj of data) {
         this.personalConnectEndpoints.push(obj);
-        console.log(obj);
       }
     }
     if (this.personalConnectEndpoints.length === 0) {

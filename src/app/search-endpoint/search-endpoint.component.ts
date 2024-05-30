@@ -72,9 +72,7 @@ export class SearchEndpointComponent implements OnInit, AfterViewInit, OnChanges
       this.getEndpoints(this.dataTransfer.userAccessTokenData.other_tokens[0].access_token, value)
           .subscribe(
               data => {
-                console.log(data);
                 this.dataSource.data = data['DATA'];
-                console.log(this.dataSource);
               },
                     error => console.log(error),
               () => {
@@ -86,10 +84,6 @@ export class SearchEndpointComponent implements OnInit, AfterViewInit, OnChanges
   getEndpoints(userAccessTokenData, value) {
     const url = 'https://transfer.api.globusonline.org/v0.10/endpoint_search?filter_fulltext=' + value +
         '&filter_non_functional=0&limit=100&offset=0';
-    console.log(url);
-    console.log(userAccessTokenData);
-    // this.userOtherAccessToken = userAccessTokenData.other_tokens[0].access_token;
-    // this.userAccessToken = userAccessTokenData.access_token;
     return this.globusService
         .getGlobus(url, 'Bearer ' + userAccessTokenData);
   }
@@ -117,7 +111,6 @@ export class SearchEndpointComponent implements OnInit, AfterViewInit, OnChanges
       data,
       action: this.action
     };
-    console.log('opening dialog');
     this.dialogRef = this.dialog.open(NavigateDirectoriesComponent, {
         data: passingData,
       height: '80%',

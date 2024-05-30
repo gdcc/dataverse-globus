@@ -17,6 +17,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {MatInputModule} from '@angular/material/input';
 import {CdkFixedSizeVirtualScroll, CdkVirtualScrollViewport} from '@angular/cdk/scrolling';
 import mime from 'mime';
+import {CustomSnackbarComponent} from "../custom-snackbar/custom-snackbar.component";
 
 export interface SelFilesType {
   fileNameObject: any;
@@ -84,8 +85,6 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
     this.load = false;
     this.ruleId = null;
     this.clientToken = null;
-    console.log(this.transferData.datasetDirectory);
-    console.log(this.selectedEndPoint);
     this.accessEndpointFlag = false;
     this.selectedFiles = new Array<SelFilesType>();
     this.checkFlag = false;
@@ -105,7 +104,6 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
                 this.load = true;
               },
               () => {
-                console.log(this.checkFlag);
                 this.accessEndpointFlag = true;
                 this.load = true;
               }
@@ -118,9 +116,7 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
       this.selectedDirectory = '~/';
     } else {
       this.selectedDirectory = this.selectedEndPoint.default_directory;
-      console.log(this.selectedDirectory);
     }
-    console.log(this.selectedEndPoint);
     const url = 'https://transfer.api.globusonline.org/v0.10/operation/endpoint/' + this.selectedEndPoint.id + '/ls';
     return this.globusService
         .getGlobus(url, 'Bearer ' + this.transferData.userAccessTokenData.other_tokens[0].access_token);
@@ -135,7 +131,6 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
         this.transferData.userAccessTokenData.other_tokens[0].access_token)
         .subscribe(
             data => {
-              console.log(data);
               this.processDirectories(data);
             },
             error => {
@@ -157,19 +152,14 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
         this.selectedOptions.push(obj);
 
         const file: SelFilesType = {fileNameObject: obj, directory: this.selectedDirectory};
-        console.log(file);
-        console.log(this.selectedFiles);
         const indx = this.selectedFiles.findIndex(x =>
             x.fileNameObject['name'] === file.fileNameObject['name'] &&
             x.fileNameObject['type'] === file.fileNameObject['type'] &&
             x.directory === file.directory
         );
-        console.log(indx);
         if (indx === -1) {
           this.selectedFiles.push(file);
         }
-        // const file: SelFilesType = {fileNameObject: obj, directory: this.selectedDirectory };
-        // this.selectedFiles.push(file);
       }
       this.checkFlag = true;
       directory.writeValue(this.personalDirectories);
@@ -178,15 +168,11 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
       for (const obj of this.personalDirectories) {
 
         const file: SelFilesType = {fileNameObject: obj, directory: this.selectedDirectory};
-        console.log(this.selectedFiles);
-        console.log(file.fileNameObject);
         const indx = this.selectedFiles.findIndex(x =>
             x.fileNameObject['name'] === file.fileNameObject['name'] &&
             x.fileNameObject['type'] === file.fileNameObject['type'] &&
             x.directory === this.selectedDirectory
         );
-        console.log('Remove');
-        console.log(indx);
         if (indx !== -1) {
           this.selectedFiles.splice(indx, 1);
         }
@@ -220,7 +206,6 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
   }
 
   upFolderProcess(data) {
-    console.log(data);
     // let absolutePath = data.absolute_path;
     let absolutePath = data['path'];
     if (data.absolute_path == null || data.absolute_path === 'null') {
@@ -240,12 +225,9 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
   processDirectories(data) {
     this.selectedOptions = new Array<object>();
     this.personalDirectories = new Array<object>();
-    console.log(data.path);
     this.selectedDirectory = data.path;
     for (const obj of data.DATA) {
-      // if (obj.type === 'dir') {
       this.personalDirectories.push(obj);
-      // }
     }
   }
 
@@ -254,8 +236,6 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
     const delay = 400;
     this.timer = setTimeout(() => {
       if (!this.preventSingleClick) {
-
-        console.log($event);
         if (this.selectedFiles == null) {
           this.selectedFiles = new Array<SelFilesType>();
         }
@@ -269,16 +249,12 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
             this.selectedFiles.push({fileNameObject: $event.options[0]._value, directory: this.selectedDirectory});
             this.selectedOptions.push($event.options[0]._value);
           }
-          console.log(this.selectedFiles);
         } else {
-          console.log(this.selectedFiles);
-          console.log("Not found");
           const indx = this.selectedFiles.findIndex(x =>
               x.fileNameObject['type'] === $event.options[0]._value['type'] &&
               x.fileNameObject['name'] === $event.options[0]._value['name'] &&
               x.directory === this.selectedDirectory
           );
-          console.log(indx);
           if (indx !== -1) {
             this.selectedFiles.splice(indx, 1);
             this.checkFlag = false;
@@ -297,7 +273,6 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
 
   checkBox($event, item) {
     if (!$event.checked) {
-      console.log('Check flag');
       this.checkFlag = false;
     }
   }
@@ -314,7 +289,6 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
           this.transferData.userAccessTokenData.other_tokens[0].access_token)
           .subscribe(
               data => {
-                console.log(data);
                 this.processDirectories(data);
               },
               error => {
@@ -342,25 +316,16 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
   }
 
   onRemoving(selectedFile: MatListOption[], selectedList) {
-    console.log(selectedFile);
-    console.log(selectedList);
     const files = selectedFile.map(o => o.value);
     files.forEach(file => {
       const indx = this.selectedFiles.indexOf(file);
-      console.log(indx);
       if (indx !== -1) {
         this.selectedFiles.splice(indx, 1);
-        console.log(file.fileNameObject);
-        console.log(this.selectedOptions);
         const indx2 = this.selectedOptions.indexOf(file.fileNameObject);
-        console.log(indx2);
-        //const indx2 = selectedList._value.indexOf(file);
         if (indx2 !== -1) {
-          console.log('Hello');
           this.selectedOptions.splice(indx2, 1);
 
           selectedList.writeValue(this.selectedOptions);
-          //selectedList._value.splice(indx2);
           this.checkFlag = false;
         }
       }
@@ -368,7 +333,6 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
   }
 
   onSubmitTransfer() {
-    console.log(this.transferData.datasetPid);
     if (this.transferData.datasetPid.localeCompare('null') !== 0) {
       this.snackBar.open('Preparing transfer', '', {
         duration: 3000
@@ -383,7 +347,6 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
         } else {
           this.listOfAllFiles.push(obj.directory + obj.fileNameObject.name);
           this.listOfFileNames.push(obj.fileNameObject.name);
-          // this.listOfAllStorageIdentifiers.push(this.globusService.generateStorageIdentifier());
           this.listOfDirectoryLabels.push('');
         }
       }
@@ -456,13 +419,8 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
     let urlPath = '';
     let body = null;
     if (this.transferData.managed) {
-      // body = '{' +
-      //     '"principal":"' + // d15d4244-fc10-47f3-a790-85bdb6db9a75",
-      //     '"numberOfFiles":' +
-      //     '}';
 
       for (const urlObject of this.transferData.signedUrls) {
-        console.log(urlObject);
         if (urlObject['name'] === 'requestGlobusTransferPaths') {
           urlPath = urlObject['signedUrl'];
           break;
@@ -470,18 +428,15 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
       }
     } else {
       for (const urlObject of this.transferData.signedUrls) {
-        console.log(urlObject);
         if (urlObject['name'] === 'requestGlobusReferencePaths') {
           urlPath = urlObject['signedUrl'];
           break;
         }
       }
     }
-    console.log('Start submitting!!!');
     const data = forkJoin(array)
         .pipe(flatMap(obj => {
           const user = obj[0];
-          console.log(user);
           if (this.transferData.managed) {
             body = '{' +
                 '"principal":"' + user['sub'] + '",' +
@@ -492,8 +447,6 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
             let files = '';
             for (const f of this.listOfAllFiles) {
               i = i + 1;
-              console.log(i);
-              console.log(this.listOfAllFiles.length);
               if (i < this.listOfAllFiles.length) {
                 files = files + '"' + this.selectedEndPoint.id + f + '",';
               } else {
@@ -504,7 +457,6 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
 
             body = '{"referencedFiles":[' + files + ']}';
           }
-          console.log(body);
           return this.globusService.postSimpleDataverse(urlPath, body); }),
               catchError(err => {
                 console.log(err);
@@ -516,7 +468,6 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
               .pipe(flatMap(data => this.my_func(data)))
               .subscribe(
                   data => {
-                    console.log(data);
                     this.taskId = data['task_id'];
                   },
                   error => {
@@ -526,7 +477,6 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
                     });
                   },
                   () => {
-                    console.log('Transfer submitted');
                     this.writeToDataverse();
                   }
               );
@@ -534,7 +484,6 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
           data
               .subscribe(
                   data => {
-                    console.log(data['data']);
                     Object.keys(data['data']).forEach(prop => {
                       this.listOfAllStorageIdentifiers.push(prop);
                       this.listOfAllStorageIdentifiersPaths.push(data['data'][prop]);
@@ -547,7 +496,6 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
                     });
                   },
                   () => {
-                    console.log('Transfer submitted');
                     this.writeToDataverse();
                   }
               );
@@ -555,7 +503,6 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
   }
 
   my_func2(data) {
-      console.log(data['data']);
       Object.keys(data['data']).forEach(prop => {
         this.listOfAllStorageIdentifiers.push(prop);
         this.listOfAllStorageIdentifiersPaths.push(data['data'][prop]);
@@ -563,15 +510,10 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
 
       data = this.globusService.submitTransfer(this.transferData.userAccessTokenData.other_tokens[0].access_token);
 
-      console.log('my_func2');
       return data;
-      // const transferArray = [transfer, data];
   }
 
   my_func(data) {
-      console.log('my_func');
-      console.log(data);
-      console.log('again my_func');
         return this.globusService.submitTransferItems(
             this.listOfAllFiles,
             this.listOfAllStorageIdentifiersPaths,
@@ -584,9 +526,6 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
 
   writeToDataverse() {
     const formData: any = new FormData();
-
-    console.log(this.listOfDirectoryLabels);
-    console.log(this.listOfAllStorageIdentifiers);
     let body = '';
     if (this.transferData.managed) {
       body = '{ \"taskIdentifier\": \"' + this.taskId + '\","files":';
@@ -629,23 +568,18 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
     } else {
       body = body + ']';
     }
-    console.log(body);
     formData.append('jsonData', body);
-    console.log(this.transferData.signedUrls);
 
     let url = '';
     for (const urlObject  of this.transferData.signedUrls) {
-      console.log(urlObject);
       if ((this.transferData.managed && urlObject['name'] === 'addGlobusFiles') ||
           (!this.transferData.managed && urlObject['name'] === 'addFiles')) {
         url = urlObject['signedUrl'];
       }
     }
-    console.log(url);
     this.globusService.postDataverse(url, formData)
         .subscribe(
             data => {
-              console.log(data);
             },
             error => {
               console.log(error);
@@ -655,10 +589,11 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
               });
             },
             () => {
-              console.log('Submitted to dataverse');
-              // this.removeRule();
+              // http://localhost:8080/dataset.xhtml?persistentId=doi:10.5072/FK2/CBYQG2
               const urlDataset = this.transferData.siteUrl + '/' + 'dataset.xhtml?persistentId=' + this.transferData.datasetPid;
-              this.snackBar.open('Transfer was initiated. \n Go to the dataverse dataset to monitor the progress.', '', {
+              this.snackBar.openFromComponent(CustomSnackbarComponent, {
+                data: ['Transfer was initiated. \n Go to the dataverse dataset to monitor the progress.',
+                  urlDataset],
                 duration: 5000
               });
             }

@@ -47,7 +47,6 @@ export class RecentlyViewedDownloadComponent implements OnInit, OnChanges {
 
   recentlyViewedExist() {
     if (typeof this.recentlyViewedEndpoints !== 'undefined' && this.recentlyViewedEndpoints.length > 0) {
-      console.log('returns true');
       return true;
     } else {
       return false;

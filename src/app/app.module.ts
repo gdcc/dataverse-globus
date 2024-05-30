@@ -50,7 +50,6 @@ export function load(http: HttpClient, config: ConfigService): (() => Promise<bo
         .pipe(
           map((x: ConfigService) => {
             config.baseUrl = x.baseUrl;
-            console.log(config.baseUrl);
             config.id = x.id;
             config.redirectUploadURL = x.redirectUploadURL;
             config.redirectDownloadURL = x.redirectDownloadURL;
@@ -63,7 +62,6 @@ export function load(http: HttpClient, config: ConfigService): (() => Promise<bo
             resolve(true);
           }),
           catchError((x: { status: number }, caught: Observable<void>): ObservableInput<{}> => {
-            console.log('error');
             if (x.status !== 404) {
               resolve(false);
             }

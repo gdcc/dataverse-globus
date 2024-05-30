@@ -14,7 +14,6 @@ export class GlobusDirective {
 
   // Dragover listener
   @HostListener('dragover', ['$event']) onDragOver(evt) {
-    console.log(evt);
     evt.preventDefault();
     evt.stopPropagation();
     this.background = '#9ecbec';
@@ -40,7 +39,6 @@ export class GlobusDirective {
 
     this.onFileDropped.emit(files);
     if (files.length > 0) {
-        console.log('on file drop');
         this.onFileDropped.emit(files);
     }
   }

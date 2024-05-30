@@ -41,25 +41,20 @@ export class SelectDirectoryComponent implements OnInit {
   @Output() updateSelectedDirectoryEvent = new EventEmitter<string>();
 
   ngOnInit(): void {
-    console.log(this.passingData);
     this.dirs = new Array<object>();
     this.findDirectories()
         .subscribe(
             data => this.processDirectories(data),
             error => {
-              console.log(error);
-              // this.load = true;
+             console.log(error);
             },
             () => {
-              // console.log(this.checkFlag);
-              // this.accessEndpointFlag = true;
-              // this.load = true;
+
             }
         );
   }
 
   findDirectories() {
-    console.log(this.passingData.selectedDirectory);
     const url = 'https://transfer.api.globusonline.org/v0.10/operation/endpoint/' + this.passingData.selectedEndPoint.id + '/ls?path=' +
         this.passingData.selectedDirectory;
     return this.globusService
@@ -67,7 +62,6 @@ export class SelectDirectoryComponent implements OnInit {
   }
 
   processDirectories(data) {
-    console.log(data);
     this.passingData.selectedDirectory = data.path;
     this.dirs = new Array<object>();
     for (const obj of data.DATA) {
@@ -84,14 +78,12 @@ export class SelectDirectoryComponent implements OnInit {
         this.passingData.dataTransfer.userAccessTokenData)
         .subscribe(
             data => {
-              console.log(data);
               this.processDirectories(data);
             },
             error => {
-              console.log(error);
+                console.log(error);
             },
             () => {
-              // check.checked = false;
             }
         );
   }
@@ -112,7 +104,6 @@ export class SelectDirectoryComponent implements OnInit {
               console.log(error);
             },
             () => {
-              // this.checkFlag = false;
             }
         );
   }
@@ -135,7 +126,6 @@ export class SelectDirectoryComponent implements OnInit {
   }
 
   submit(directory) {
-    console.log(directory);
     if (directory !== null) {
         const selectedDirectory = this.passingData.selectedDirectory + directory + '/';
         this.updateSelectedDirectoryEvent.emit(selectedDirectory);

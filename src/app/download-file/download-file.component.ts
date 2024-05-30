@@ -40,7 +40,6 @@ export class DownloadFileComponent implements OnInit {
 
   ngOnInit(): void {
     this.redirectURL = this.config.redirectDownloadFileURL;
-    console.log(this.redirectURL);
     this.dataTransfer = {} as TransferData;
     this.dataTransfer.load = false;
     this.action = false;

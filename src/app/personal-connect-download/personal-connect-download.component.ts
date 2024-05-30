@@ -39,7 +39,6 @@ export class PersonalConnectDownloadComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.load = false;
-    console.log(this.type);
   }
 
   ngOnChanges() {
