@@ -115,4 +115,20 @@ For dataverse-globus to work with Dataverse the following jvm options should be 
 
 ## For referenced endpoint:
 
+-Ddataverse.files.storage-driver-id=\<storage-alias\>
+
+-Ddataverse.files.\<storage-alias\>.type=globus
+
+-Ddataverse.files.\<storage-alias\>.label=\<label\>
+
+-Ddataverse.files.\<storage-alias\>.base-store=s3 
+
+-Ddataverse.files.\<storage-alias\>.managed=false
+
+-Ddataverse.files.\<storage-alias\>.files-not-accessible-by-dataverse=true
+
+-Ddataverse.files.\<storage-alias\>.reference-endpoints-with-basepaths=\<List of globus and points separated by coma\>
+
+-Ddataverse.files.\<storage-alias\>.globus-token=\<Globus basic token\> It is base64 encoded client ID and secret, separated by a single colon.
+
 
