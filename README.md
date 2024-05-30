@@ -1,4 +1,4 @@
-# dataverse-globus
+# dataverse-globus-v2
 
 _In development_.
 
@@ -70,6 +70,49 @@ In order to generate node_modules run `npm install` from a root of project direc
 Then run `npm install @angular/cli@17.1.2` to install `ng` and the rest of Angular CLI.
 The executable `ng` must be in your `$PATH`. To add it, run `export PATH=$PATH:node_modules/.bin`.
 
+#Dataverse jvm-options
+To use dataverse-globus with dataverse, dataverse app needs to have following jvm options:
+
+
+
 To build run `ng build --base-href=path_to_globus_app`
 
 You should have compiled source in dist directory. Copy dataverse-globus/dist into a dedicated folder on your webserver.
+
+# Dataverse jvm-options
+
+For dataverse-globus to work with Dataverse the following jvm options should be created:
+
+For S3 managed:
+
+-Ddataverse.files.storage-driver-id=\<storage-alias\>
+
+-Ddataverse.files.s3.bucket-name=\<backet-name-in-S3\>
+
+-Ddataverse.files.s3.path-style-access=true
+
+-Ddataverse.files.s3.custom-endpoint-url=\<URL-of-S3\>
+
+-Ddataverse.files.s3.custom-endpoint-region=us-east-1
+
+-Ddataverse.files.s3.type=s3
+
+-Ddataverse.files.s3.label=\<Label-for-storage\>
+
+-Ddataverse.files.s3.transfer-endpoint-with-basepath=\<S3 endpoint\>
+
+-Ddataverse.files.s3.globus-transfer-endpoint-with-basepath=\<S3 endpoint\>
+
+-Ddataverse.files.s3.download-redirect=true
+
+-Ddataverse.files.s3.files-not-accessible-by-dataverse=false
+
+-Ddataverse.files.s3.managed=true
+
+-Ddataverse.files.s3.globus-token=\<Globus basic token\> It is base64 encoded client ID and secret, separated by a single colon.
+
+-Ddataverse.files.s3.upload-redirect=true
+
+For referenced endpoint:
+
+
