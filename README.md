@@ -130,3 +130,12 @@ For dataverse-globus to work with Dataverse the following jvm options should be 
 -Ddataverse.files.\<storage-alias\>.reference-endpoints-with-basepaths=\<List of globus and points separated by coma\>
 
 -Ddataverse.files.\<storage-alias\>.globus-token=\<Globus basic token\> It is base64 encoded client ID and secret, separated by a single colon.
+
+# Dataverse database settings
+For Globus Upload and Globus Download buttons to appear on dataverse dataset page, one will need to add globus to :UploadMethods and :DownloadMethods. For example:
+
+``curl -X PUT -d 'native/http,globus' http://localhost:8080/api/admin/settings/:UploadMethods``
+
+``curl -X PUT -d 'native/http,globus' http://localhost:8080/api/admin/settings/:DownloadMethods``
+
+
