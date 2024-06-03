@@ -70,11 +70,6 @@ In order to generate node_modules run `npm install` from a root of project direc
 Then run `npm install @angular/cli@17.1.2` to install `ng` and the rest of Angular CLI.
 The executable `ng` must be in your `$PATH`. To add it, run `export PATH=$PATH:node_modules/.bin`.
 
-#Dataverse jvm-options
-To use dataverse-globus with dataverse, dataverse app needs to have following jvm options:
-
-
-
 To build run `ng build --base-href=path_to_globus_app`
 
 You should have compiled source in dist directory. Copy dataverse-globus/dist into a dedicated folder on your webserver.
