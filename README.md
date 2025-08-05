@@ -70,9 +70,66 @@ In order to generate node_modules run `npm install` from a root of project direc
 Then run `npm install @angular/cli@17.1.2` to install `ng` and the rest of Angular CLI.
 The executable `ng` must be in your `$PATH`. To add it, run `export PATH=$PATH:node_modules/.bin`.
 
-To build run `ng build --base-href=path_to_globus_app`
+To build run `ng build --base-href=path_to_globus_app --omit=dev`
 
 You should have compiled source in dist directory. Copy dataverse-globus/dist into a dedicated folder on your webserver.
+
+# Deploying production with NGINX
+This installation assumes that dataverse-globus app will be running on it's own web server.
+The installation and deployment instructions are written for RHEL. Adjust as needed for other flavors of Linux.
+You must have SSL certificate and key in order to continue with deployment.
+
+Install nginx 
+```bash
+sudo dnf install nginx
+```
+
+Enable and start nginx
+```bash
+sudo systemctl enable nginx
+```
+```bash
+sudo systemctl start nginx
+```
+Basic nginx configuration file:
+Create a new file in the `/etc/nginx/conf.d` directory. Name it `dataverseglobus.conf`
+```bash
+sudo touch /etc/nginx/conf.d/dataverseglobus.conf
+```
+
+The following is a sample `dataverseglobus.conf` file. You may adjust as needed to suite your installation.
+```
+server {
+    listen 443 ssl;
+    ssl_certificate /path/to/your/certificate.cer;
+    ssl_certificate_key /path/to/your/private/key.key;
+    server_name dvglobus.whoi.edu;
+
+    root /usr/share/nginx/html/globus/;
+
+    # Serve index.html for all not-found paths (good for SPAs)
+    location / {
+        proxy_set_header X-Forwarded-Proto https;
+        try_files $uri $uri/ /index.html;
+    }
+
+    # (Optional) Serve static assets with proper cache headers
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+    }
+}
+
+```
+
+Copy dataverse-globus app to directory anginx can access
+```bash
+sudo cp -r /path/to/dataverse-globus-app/dist/globus /usr/share/nginx/html/globus/
+```
+Restart nginx
+ ```bash
+sudo systemctl restart nginx
+```
 
 # Dataverse jvm-options
 
