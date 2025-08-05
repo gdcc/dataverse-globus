@@ -97,13 +97,14 @@ Create a new file in the `/etc/nginx/conf.d` directory. Name it `dataverseglobus
 sudo touch /etc/nginx/conf.d/dataverseglobus.conf
 ```
 
-The following is a sample `dataverseglobus.conf` file. You may adjust as needed to suite your installation.
+The following is a sample `dataverseglobus.conf` file. You may adjust as needed to suite your installation. Copy the config below into `dataverseglobus.conf`
+Replace path to certificate and key with correct path, as well as insert your server name.
 ```
 server {
     listen 443 ssl;
     ssl_certificate /path/to/your/certificate.cer;
     ssl_certificate_key /path/to/your/private/key.key;
-    server_name dvglobus.whoi.edu;
+    server_name your.server.com;
 
     root /usr/share/nginx/html/globus/;
 
