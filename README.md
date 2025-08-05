@@ -79,26 +79,26 @@ This installation assumes that dataverse-globus app will be running on it's own 
 The installation and deployment instructions are written for RHEL. Adjust as needed for other flavors of Linux.
 You must have SSL certificate and key in order to continue with deployment.
 
-Install nginx 
+Install nginx: 
 ```bash
 sudo dnf install nginx
 ```
 
-Enable and start nginx
+Enable and start nginx:
 ```bash
 sudo systemctl enable nginx
 ```
 ```bash
 sudo systemctl start nginx
 ```
-Basic nginx configuration file:
-Create a new file in the `/etc/nginx/conf.d` directory. Name it `dataverseglobus.conf`
+
+Create a new file in the `/etc/nginx/conf.d` directory. Name it `dataverseglobus.conf`:
 ```bash
 sudo touch /etc/nginx/conf.d/dataverseglobus.conf
 ```
 
 The following is a sample `dataverseglobus.conf` file. You may adjust as needed to suite your installation. Copy the config below into `dataverseglobus.conf`
-Replace path to certificate and key with correct path, as well as insert your server name.
+Replace path to certificate and key with correct path, as well as insert your server name.:
 ```
 server {
     listen 443 ssl;
@@ -123,11 +123,11 @@ server {
 
 ```
 
-Copy dataverse-globus app to directory anginx can access
+Copy dataverse-globus app to directory nginx can access:
 ```bash
 sudo cp -r /path/to/dataverse-globus-app/dist/globus /usr/share/nginx/html/globus/
 ```
-Restart nginx
+Restart nginx:
  ```bash
 sudo systemctl restart nginx
 ```
