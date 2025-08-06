@@ -97,7 +97,7 @@ Create a new file in the `/etc/nginx/conf.d` directory. Name it `dataverseglobus
 sudo touch /etc/nginx/conf.d/dataverseglobus.conf
 ```
 
-The following is a sample `dataverseglobus.conf` file. You may adjust as needed to suite your installation. Copy the config below into `dataverseglobus.conf`
+The following is a sample `dataverseglobus.conf` file. You may adjust as needed to suit your installation. Copy the config below into `dataverseglobus.conf`
 Replace the path to the certificate and key with correct path and insert your server name.:
 ```
 server {
