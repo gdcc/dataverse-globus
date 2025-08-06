@@ -98,7 +98,7 @@ sudo touch /etc/nginx/conf.d/dataverseglobus.conf
 ```
 
 The following is a sample `dataverseglobus.conf` file. You may adjust as needed to suite your installation. Copy the config below into `dataverseglobus.conf`
-Replace path to certificate and key with correct path, as well as insert your server name.:
+Replace the path to the certificate and key with correct path and insert your server name.:
 ```
 server {
     listen 443 ssl;
