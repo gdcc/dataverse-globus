@@ -75,7 +75,7 @@ To build run `ng build --base-href=path_to_globus_app --omit=dev`
 You should have compiled source in dist directory. Copy dataverse-globus/dist into a dedicated folder on your webserver.
 
 # Deploying production with NGINX
-This installation assumes that dataverse-globus app will be running on it's own web server.
+This installation assumes that dataverse-globus app will be running on its own web server.
 The installation and deployment instructions are written for RHEL. Adjust as needed for other flavors of Linux.
 You must have SSL certificate and key in order to continue with deployment.
 
