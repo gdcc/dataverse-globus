@@ -1,21 +1,30 @@
-# build with $ podman build -f Dockerfile -v "$(pwd)":/build/dataverse-globus --userns-uid-map=0:1000:1 -t dataverse-globus .
-# run with $ podman run --userns=keep-id -v "$(pwd)":/build/dataverse-globus dataverse-globus
+# build with $ podman build --target export --output type=local,dest=./dist .
 
-# Use Rocky Linux 8 as base
-FROM rockylinux:8
+# Use Rocky Linux 8 as base for now
+FROM rockylinux:8 AS builder
 
 # Install required tools: git, curl, Node.js (LTS), npm
 # using NodeJS:14 per ScholarsPortal README
 RUN dnf -y module enable nodejs:14
 
-RUN dnf -y install git curl nodejs && \
+RUN dnf -y install curl nodejs && \
     dnf clean all
 
 # Set working directory
 WORKDIR /build/dataverse-globus
 
+# Copy package files first for better layer caching
+COPY package*.json ./
+
 # Install npm dependencies
 RUN npm install
 
+# Copy the rest of the application
+COPY . .
+
 # Build Angular project
 RUN npm run build
+
+# export dist to filesystem
+FROM scratch AS export
+COPY --from=builder /build/dataverse-globus/dist .
