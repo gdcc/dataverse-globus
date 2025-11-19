@@ -4,8 +4,8 @@
 FROM rockylinux:8 AS builder
 
 # Install required tools: git, curl, Node.js (LTS), npm
-# using NodeJS:14 per ScholarsPortal README
-RUN dnf -y module enable nodejs:14
+# using NodeJS:18 per GDCC README
+RUN dnf -y module enable nodejs:18
 
 RUN dnf -y install curl nodejs && \
     dnf clean all
