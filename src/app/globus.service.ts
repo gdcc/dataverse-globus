@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 import { of, merge, from} from 'rxjs';
-import { filter, flatMap} from 'rxjs/operators';
+import { filter, mergeMap} from 'rxjs/operators';
 
 @Injectable()
 export class GlobusService {
@@ -79,7 +79,7 @@ export class GlobusService {
     return this.http.get(url);
   }
 
-  getParameterByName(name, url) {
+  getParameterByName(name: string, url: string | null): string {
     if (url == null) {
       url = window.location.href;
     }
@@ -87,7 +87,7 @@ export class GlobusService {
     const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
     const results = regex.exec(url);
     if (!results) {
-      return null;
+      return '';
     }
     if (!results[2]) {
       return '';
@@ -117,10 +117,10 @@ export class GlobusService {
       const path = directory.path;
       return merge(
           of(directory),
-          from(directory.DATA)
+          from(directory.DATA as any[])
               .pipe(filter(d => d['type'] === 'dir'))
-              .pipe(flatMap(obj => this.getDirectory(path + obj['name'], selectedEndPointId, userOtherAccessToken)))
-              .pipe(flatMap(d => this.getInnerDirectories(d, selectedEndPointId, userOtherAccessToken))));
+              .pipe(mergeMap(obj => this.getDirectory(path + obj['name'], selectedEndPointId, userOtherAccessToken)))
+              .pipe(mergeMap(d => this.getInnerDirectories(d, selectedEndPointId, userOtherAccessToken))));
     } else {
       return of(directory);
     }

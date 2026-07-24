@@ -1,5 +1,5 @@
 import {Component, Input, OnChanges, OnInit} from '@angular/core';
-import {TransferData} from '../upload/upload.component';
+import {TransferData} from '../models/transfer-data';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -34,7 +34,7 @@ export class RecentlyViewedDownloadComponent implements OnInit, OnChanges {
   @Input() type: number;
   load: boolean;
   selectedEndPoint: any;
-  recentlyViewedEndpoints: Array<object>;
+  recentlyViewedEndpoints: Array<any>;
 
 
   ngOnInit(): void {

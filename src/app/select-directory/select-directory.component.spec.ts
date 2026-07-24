@@ -8,7 +8,7 @@ describe('SelectDirectoryComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ SelectDirectoryComponent ]
+      imports: [ SelectDirectoryComponent ]
     })
     .compileComponents();
   }));

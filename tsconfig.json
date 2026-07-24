@@ -8,8 +8,11 @@
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
+    "strictPropertyInitialization": false,
+    "noImplicitAny": false,
+    "ignoreDeprecations": "6.0",
     "module": "es2020",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "importHelpers": true,
     "target": "ES2022",
     "lib": [

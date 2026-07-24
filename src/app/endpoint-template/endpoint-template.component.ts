@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
-import {TransferData} from '../upload/upload.component';
+import {TransferData} from '../models/transfer-data';
 import {GlobusService} from '../globus.service';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
@@ -9,7 +9,7 @@ import {NgForOf, NgIf} from '@angular/common';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {forkJoin, Observable, Subject, throwError} from 'rxjs';
-import {catchError, flatMap} from 'rxjs/operators';
+import {catchError, mergeMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-endpoint-template',
@@ -31,7 +31,7 @@ export class EndpointTemplateComponent implements OnInit, OnChanges {
 
   selectedEndPoint: any;
 
-  personalConnectEndpoints: Array<object>;
+  personalConnectEndpoints: Array<any>;
 
   @Input() type: number;
   @Input() transferData: TransferData;
@@ -49,7 +49,7 @@ export class EndpointTemplateComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
 
-    this.personalConnectEndpoints = new Array<object>();
+    this.personalConnectEndpoints = new Array<any>();
     if (typeof this.transferData.userAccessTokenData !== 'undefined') {
 
       if (this.typeOfTab === 0 || this.typeOfTab === 1) {
@@ -112,7 +112,7 @@ export class EndpointTemplateComponent implements OnInit, OnChanges {
   }
 
   processPersonalConnect(data) {
-    this.personalConnectEndpoints = new Array<object>();
+    this.personalConnectEndpoints = new Array<any>();
     if (this.typeOfTab === 0) {
       for (const obj of data.DATA) {
         if (obj.gcp_connected) {

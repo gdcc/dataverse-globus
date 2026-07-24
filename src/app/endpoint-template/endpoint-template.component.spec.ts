@@ -8,7 +8,7 @@ describe('EndpointTemplateComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ EndpointTemplateComponent ]
+      imports: [ EndpointTemplateComponent ]
     })
     .compileComponents();
   }));

@@ -13,24 +13,7 @@ import {PersonalConnectComponent} from '../personal-connect/personal-connect.com
 import {RecentlyViewedComponentComponent} from '../recently-viewed-component/recently-viewed-component.component';
 import {ReferencedComponent} from '../referenced/referenced.component';
 
-export interface TransferData {
-  load: boolean;
-  userAccessTokenData: any;
-  basicClientToken: string;
-  datasetDirectory: string;
-  globusEndpoint: string;
-  datasetPid: string;
-  datasetVersion: string;
-  datasetId: string;
-  key: string;
-  siteUrl: string;
-  files: any;
-  fileMetadataId: string;
-  storePrefix: string;
-  signedUrls: any;
-  managed: boolean;
-  referenceEndpointsWithPaths: Array<string>;
-}
+import {TransferData} from '../models/transfer-data';
 
 @Component({
   selector: 'app-upload',

@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { GlobusService } from '../globus.service';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
-import {TransferData} from '../upload/upload.component';
+import {TransferData} from '../models/transfer-data';
 import {Config} from '../app.component';
 import * as ConfigJson from '../../assets/config.json';
 
@@ -53,7 +53,7 @@ export class InterfaceComponent implements OnInit {
       this.langArray.push({value: 'fr', viewValue: 'Français'});
 
       const browserLang = this.translate.getBrowserLang();
-      if (browserLang != null) {
+      if (browserLang) {
           this.translate.use(browserLang.match(/en|fr/) ? browserLang : 'en');
       }
       this.languages = new FormControl(this.translate.currentLang);
@@ -76,7 +76,7 @@ export class InterfaceComponent implements OnInit {
         this.transferData.load = false;
         this.title = 'Globus';
 
-        this.transferData.datasetDirectory = null;
+        this.transferData.datasetDirectory = '';
         const code = this.globusService.getParameterByName('code',null);
         const callback = this.globusService.getParameterByName('callback',null);
         const dvLocale = this.globusService.getParameterByName('dvLocale',null);
@@ -99,11 +99,15 @@ export class InterfaceComponent implements OnInit {
                 this.translate.use('fr');
             } else {
                 const browserLang = this.translate.getBrowserLang();
-                this.translate.use(browserLang.match(/en|fr/) ? browserLang : 'en');
+                if (browserLang) {
+                    this.translate.use(browserLang.match(/en|fr/) ? browserLang : 'en');
+                }
             }
         } else {
             const browserLang = this.translate.getBrowserLang();
-            this.translate.use(browserLang.match(/en|fr/) ? browserLang : 'en');
+            if (browserLang) {
+                this.translate.use(browserLang.match(/en|fr/) ? browserLang : 'en');
+            }
         }
     }
     onLanguageChange(language: string) {

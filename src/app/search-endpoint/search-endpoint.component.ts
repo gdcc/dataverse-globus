@@ -3,7 +3,7 @@ import {GlobusService} from '../globus.service';
 import {MatTableDataSource as MatTableDataSource} from '@angular/material/table';
 
 import { NavigateDirectoriesComponent } from '../navigate-directories/navigate-directories.component';
-import {TransferData} from '../upload/upload.component';
+import {TransferData} from '../models/transfer-data';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -89,7 +89,7 @@ export class SearchEndpointComponent implements OnInit, AfterViewInit, OnChanges
   }
 
   getDisplayedColumns() {
-    let displayedColumns = []; // 'order_arrows'
+    let displayedColumns: string[] = []; // 'order_arrows'
 
     displayedColumns = [
       'display_name',

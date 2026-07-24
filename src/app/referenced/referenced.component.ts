@@ -3,7 +3,7 @@ import {EndpointTemplateComponent} from '../endpoint-template/endpoint-template.
 import {NavigateTemplateComponent} from '../navigate-template/navigate-template.component';
 import {NgIf} from '@angular/common';
 import {TranslateModule} from '@ngx-translate/core';
-import {TransferData} from '../upload/upload.component';
+import {TransferData} from '../models/transfer-data';
 
 @Component({
   selector: 'app-referenced',
@@ -22,7 +22,7 @@ export class ReferencedComponent {
     @Input() type: number; // 0 - left, 1 - right, 2 - center
     load: boolean;
     selectedEndPoint: any;
-    referencedEndpoints: Array<object>;
+    referencedEndpoints: Array<any>;
 
     setSelectedEndpoint($event: any) {
         this.selectedEndPoint = $event;

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {TransferData} from '../upload/upload.component';
+import {TransferData} from '../models/transfer-data';
 import {ConfigService} from '../config.service';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';

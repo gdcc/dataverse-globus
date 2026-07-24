@@ -1,7 +1,7 @@
 import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {GlobusService} from '../globus.service';
-import {TransferData} from '../upload/upload.component';
-import {catchError, flatMap} from 'rxjs/operators';
+import {TransferData} from '../models/transfer-data';
+import {catchError, mergeMap} from 'rxjs/operators';
 import {forkJoin, of, throwError} from 'rxjs';
 import {Stack} from '../stack';
 import {SelectDirectoryComponent} from '../select-directory/select-directory.component';
@@ -67,9 +67,9 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   public dialogRef: MatDialogRef<SelectDirectoryComponent>;
   selectedDirectory: string;
   files: Array<string>;
-  paths: Array<object>;
-  levels: Stack<object>;
-  levelsDownloadTo: Stack<object>;
+  paths: Array<any>;
+  levels: Stack<any>;
+  levelsDownloadTo: Stack<any>;
   allDataFiles: Array<any>;
 
   loaded: boolean;
@@ -79,10 +79,10 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   personalDirectories: any;
   downloadToDirectories: any;
   selectedOptions: any;
-  selectedFiles: Array<object>;
+  selectedFiles: Array<any>;
   isSingleClick: boolean;
   storageIdentifiers: Array<string>;
-  listOfAllFiles: Array<object>;
+  listOfAllFiles: Array<any>;
   listOfAllPaths: Array<string>;
   taskId: string;
   ruleId: string;
@@ -107,9 +107,9 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   }
 
   startComponent() {
-    this.ruleId = null;
+    this.ruleId = '';
     this.clientToken = null;
-    this.selectedFiles = new Array<object>();
+    this.selectedFiles = new Array<any>();
     this.loaded = false;
     this.accessEndpointFlag = false;
     if (this.selectedEndPoint.default_directory == null) {
@@ -146,14 +146,14 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
     }
   }
   processDirectoriesToDownload(data) {
-    this.downloadToDirectories = new Array<object>();
+    this.downloadToDirectories = new Array<any>();
     this.selectedDirectory = data.path;
     for (const obj of data.DATA) {
       if (obj.type === 'dir') {
         this.downloadToDirectories.push(obj);
       }
     }
-    this.levelsDownloadTo = new Stack<object>();
+    this.levelsDownloadTo = new Stack<any>();
   }
 
   getDownloadingToDirectories() {
@@ -180,7 +180,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   processDirectories(data) {
     if (this.type !== 2) {
       this.files = new Array<string>();
-      this.paths = new Array<object>();
+      this.paths = new Array<any>();
       this.storageIdentifiers = new Array<string>();
       this.allDataFiles = new Array<any>();
       for (const obj of data.data) {
@@ -214,13 +214,13 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
       }
       this.personalDirectories = this.arrangeIntoTree(this.paths);
       this.tree = this.personalDirectories;
-      this.levels = new Stack<object>();
-      this.selectedOptions = new Array<object>();
+      this.levels = new Stack<any>();
+      this.selectedOptions = new Array<any>();
     }
   }
 
   arrangeIntoTree(paths) {
-    const tree = [];
+    const tree: any[] = [];
 
     for (let i = 0; i < paths.length; i++) {
       const path = paths[i];
@@ -289,7 +289,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
         }
       }
 
-      this.selectedOptions = new Array<object>();
+      this.selectedOptions = new Array<any>();
       directory.writeValue(this.selectedOptions);
     }
   }
@@ -318,7 +318,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   }
 
   removeAllFromSelected(directory) {
-    this.selectedFiles = new Array<object>();
+    this.selectedFiles = new Array<any>();
     directory.writeValue(null);
     this.selectedOptions = new Array();
     this.checkFlag = false;
@@ -361,7 +361,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
     this.globusService.getDirectory(this.selectedDirectory,
         this.selectedEndPoint.id,
         this.transferData.userAccessTokenData.other_tokens[0].access_token)
-        .pipe(flatMap(data => this.upFolderProcess(data)))
+        .pipe(mergeMap(data => this.upFolderProcess(data)))
         .subscribe(
             data => {
               if (data !== null) {
@@ -405,12 +405,12 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
 
   openDirectory($event, item, directory, check) {
     this.isSingleClick = false;
-    this.selectedOptions = new Array<object>();
-    this.selectedOptions = new Array<object>();
+    this.selectedOptions = new Array<any>();
+    this.selectedOptions = new Array<any>();
     if (item.children.length > 0) {
       this.levels.push(this.personalDirectories);
       // this.selectedDirectory = this.selectedDirectory + item.name;
-      this.selectedOptions = new Array<object>();
+      this.selectedOptions = new Array<any>();
       this.personalDirectories = item.children;
       directory.writeValue(this.selectedOptions);
       check.checked = false;
@@ -441,7 +441,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
     }
     json_data = json_data + ']}';
     // curl -H "X-Dataverse-key:$API_TOKEN" -H "Content-type:application/json" -X POST -d "$JSON_DATA" "$SERVER_URL/api/datasets/:persistentId/requestGlobusDownload?persistentId=$PERSISTENT_IDENTIFIER"
-    let urlPath = null;
+    let urlPath: any = null;
     for (const urlObject of this.transferData.signedUrls) {
       if (/*this.transferData.managed &&*/ urlObject['name'] === 'requestGlobusDownload') {
         urlPath = urlObject['signedUrl'];
@@ -452,7 +452,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   }
 
   onSubmitTransfer() {
-    this.listOfAllFiles = new Array<object>();
+    this.listOfAllFiles = new Array<any>();
     this.listOfAllPaths = new Array<string>();
     this.findChildren(this.selectedFiles, '');
 
@@ -467,11 +467,11 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
         sourceDatasetDirectory = this.transferData.datasetDirectory;
       }
       forkJoin(array)
-          .pipe(flatMap(data => this.askRequestDownload(data)))
-          .pipe(flatMap(data => {
+          .pipe(mergeMap(data => this.askRequestDownload(data)))
+          .pipe(mergeMap(data => {
             return this.globusService.submitTransfer(this.transferData.userAccessTokenData.other_tokens[0].access_token);
           } ))
-          .pipe(flatMap(data => this.globusService.submitTransferToUser(
+          .pipe(mergeMap(data => this.globusService.submitTransferToUser(
               this.listOfAllFiles, this.listOfAllPaths, data['value'], sourceDatasetDirectory,
               this.selectedDirectory, this.transferData.globusEndpoint, this.selectedEndPoint,
               this.transferData.userAccessTokenData.other_tokens[0].access_token)))
@@ -512,7 +512,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
     let json_data = '{ ' +
         '"taskIdentifier":"' + task_id + '"';
     json_data = json_data + '}';
-    let urlPath = null;
+    let urlPath: any = null;
     for (const urlObject of this.transferData.signedUrls) {
       if (this.transferData.managed && urlObject['name'] === 'monitorGlobusDownload') {
         urlPath = urlObject['signedUrl'];

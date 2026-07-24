@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Inject, OnInit, Output} from '@angular/core';
 
 import {GlobusService} from '../globus.service';
-import {flatMap} from 'rxjs/operators';
+import {mergeMap} from 'rxjs/operators';
 import {of} from 'rxjs';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
@@ -37,11 +37,11 @@ export class SelectDirectoryComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public passingData: any,
               private globusService: GlobusService) { }
-  dirs: Array<object>;
+  dirs: Array<any>;
   @Output() updateSelectedDirectoryEvent = new EventEmitter<string>();
 
   ngOnInit(): void {
-    this.dirs = new Array<object>();
+    this.dirs = new Array<any>();
     this.findDirectories()
         .subscribe(
             data => this.processDirectories(data),
@@ -63,7 +63,7 @@ export class SelectDirectoryComponent implements OnInit {
 
   processDirectories(data) {
     this.passingData.selectedDirectory = data.path;
-    this.dirs = new Array<object>();
+    this.dirs = new Array<any>();
     for (const obj of data.DATA) {
       if (obj.type === 'dir') {
         this.dirs.push(obj);
@@ -93,7 +93,7 @@ export class SelectDirectoryComponent implements OnInit {
     this.globusService.getDirectory(this.passingData.selectedDirectory,
         this.passingData.selectedEndPoint.id,
         this.passingData.dataTransfer.userAccessTokenData)
-        .pipe(flatMap(data => this.upFolderProcess(data)))
+        .pipe(mergeMap(data => this.upFolderProcess(data)))
         .subscribe(
             data => {
               if (data !== null) {

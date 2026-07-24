@@ -3,7 +3,7 @@ import {APP_INITIALIZER, NgModule} from '@angular/core';
 
 // import { MatomoModule } from 'ngx-matomo';
 import { ConfigService } from './config.service';
-import { of, Observable, ObservableInput } from '../../node_modules/rxjs';
+import { of, Observable, ObservableInput } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
 import { AppComponent } from './app.component';
@@ -46,7 +46,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
 export function load(http: HttpClient, config: ConfigService): (() => Promise<boolean>) {
   return (): Promise<boolean> => {
     return new Promise<boolean>((resolve: (a: boolean) => void): void => {
-      http.get('./assets/config.json')
+      http.get<any>('./assets/config.json')
         .pipe(
           map((x: ConfigService) => {
             config.baseUrl = x.baseUrl;
@@ -77,8 +77,6 @@ export function load(http: HttpClient, config: ConfigService): (() => Promise<bo
 
 @NgModule({
     declarations: [
-        AppComponent,
-        GlobusDirective
     ],
     imports: [
         BrowserModule,
@@ -101,6 +99,8 @@ export function load(http: HttpClient, config: ConfigService): (() => Promise<bo
         MatTreeModule,
         MatCardModule,
         ReactiveFormsModule,
+        AppComponent,
+        GlobusDirective,
         InterfaceComponent,
         EndpointTemplateComponent,
         NavigateDirectoriesComponent,
