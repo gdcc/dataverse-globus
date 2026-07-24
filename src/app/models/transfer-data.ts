@@ -14,5 +14,5 @@ export interface TransferData {
   storePrefix: string;
   signedUrls: any;
   managed: boolean;
-  referenceEndpointsWithPaths: Array<string>;
+  referenceEndpointsWithPaths: string[];
 }

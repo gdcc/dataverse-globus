@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnChanges, OnInit} from '@angular/core';
+import { AfterViewInit, Component, Input, OnChanges, OnInit, inject } from '@angular/core';
 import {GlobusService} from '../globus.service';
 import {MatTableDataSource as MatTableDataSource} from '@angular/material/table';
 
@@ -8,7 +8,6 @@ import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
-import {NgForOf, NgIf} from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
 import {MatTableModule} from '@angular/material/table';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
@@ -29,9 +28,7 @@ export interface PassingDataType {
     MatToolbarModule,
     MatFormFieldModule,
     MatSelectModule,
-    NgIf,
     ReactiveFormsModule,
-    NgForOf,
     MatIconModule,
     MatTableModule,
     MatInputModule
@@ -40,6 +37,9 @@ export interface PassingDataType {
   styleUrls: ['./search-endpoint.component.css']
 })
 export class SearchEndpointComponent implements OnInit, AfterViewInit, OnChanges {
+  private globusService = inject(GlobusService);
+  dialog = inject(MatDialog);
+
 
   public dialogRef: MatDialogRef<NavigateDirectoriesComponent>;
   value: string;
@@ -49,8 +49,6 @@ export class SearchEndpointComponent implements OnInit, AfterViewInit, OnChanges
   dataSource: MatTableDataSource<any>;
   displayedColumns: any;
   loaded;
-  constructor(private globusService: GlobusService,
-              public dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.loaded = false;

@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {TransferData} from '../models/transfer-data';
 import {ConfigService} from '../config.service';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
-import {NgForOf, NgIf} from '@angular/common';
+
 import {ReactiveFormsModule} from '@angular/forms';
 import {InterfaceComponent} from '../interface/interface.component';
 import {MatTabsModule} from '@angular/material/tabs';
@@ -19,24 +19,22 @@ import {PersonalConnectDownloadComponent} from '../personal-connect-download/per
     MatToolbarModule,
     MatFormFieldModule,
     MatSelectModule,
-    NgIf,
     ReactiveFormsModule,
-    NgForOf,
     InterfaceComponent,
     MatTabsModule,
     PersonalConnectDownloadComponent
-  ],
+],
   templateUrl: './download-file.component.html',
   styleUrls: ['./download-file.component.css']
 })
 export class DownloadFileComponent implements OnInit {
+  private config = inject(ConfigService);
+
 
   redirectURL: string;
   dataTransfer: TransferData;
   action: boolean; // false for download
   type: number;
-
-  constructor(private config: ConfigService) { }
 
   ngOnInit(): void {
     this.redirectURL = this.config.redirectDownloadFileURL;

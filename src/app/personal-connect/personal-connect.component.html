@@ -4,17 +4,21 @@
                        [transferData] = "dataTransfer"
                        [typeOfTab]="0">
 </app-endpoint-template>
-<div class="center" *ngIf="!personalConnectExist() && load">
+@if (!personalConnectExist() && load) {
+<div class="center">
     <h3 class="my-translated-paragraph">
     {{'PERSONAL.ERROR' | translate}}
     </h3>
 </div>
+}
 
-<ng-container class="interface-container"*ngIf="personalConnectExist() && load ">
+@if (personalConnectExist() && load) {
+<ng-container class="interface-container">
         <app-navigate-template [transferData]="dataTransfer"
                                [selectedEndPoint]="selectedEndPoint">
         </app-navigate-template>
 </ng-container>
+}
 
 
 

@@ -22,7 +22,7 @@ export class ReferencedComponent {
     @Input() type: number; // 0 - left, 1 - right, 2 - center
     load: boolean;
     selectedEndPoint: any;
-    referencedEndpoints: Array<any>;
+    referencedEndpoints: any[];
 
     setSelectedEndpoint($event: any) {
         this.selectedEndPoint = $event;

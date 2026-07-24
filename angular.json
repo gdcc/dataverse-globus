@@ -17,7 +17,6 @@
               "js-sha256",
               "js-pkce"
             ],
-          
             "outputPath": "dist/globus",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -105,22 +104,23 @@
             "scripts": []
           }
         },
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "globus:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "globus:serve:production"
-            }
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         }
       }
     }
   },
   "cli": {
-    "analytics": false
+    "analytics": false,
+    "schematicCollections": [
+      "angular-eslint",
+      "@schematics/angular"
+    ]
   }
 }

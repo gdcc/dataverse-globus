@@ -1,17 +1,19 @@
 <ng-container >
-    <div mat-dialog-content >
+  <div mat-dialog-content >
     <h1 class="center">{{'INTERFACE.TITLE' | translate}}</h1>
-        <div *ngIf="data.action">
-                <app-navigate-template [transferData]="data.dataTransfer"
-                                       [selectedEndPoint]="selectedEndPoint">
-
-                </app-navigate-template>
-        </div>
-        <div *ngIf="!data.action">
-            <app-navigate-template-download [transferData]="data.dataTransfer"
-                                            [selectedEndPoint]="selectedEndPoint">
-
-            </app-navigate-template-download>
-        </div>
-    </div>
+    @if (data.action) {
+      <div>
+        <app-navigate-template [transferData]="data.dataTransfer"
+          [selectedEndPoint]="selectedEndPoint">
+        </app-navigate-template>
+      </div>
+    }
+    @if (!data.action) {
+      <div>
+        <app-navigate-template-download [transferData]="data.dataTransfer"
+          [selectedEndPoint]="selectedEndPoint">
+        </app-navigate-template-download>
+      </div>
+    }
+  </div>
 </ng-container>

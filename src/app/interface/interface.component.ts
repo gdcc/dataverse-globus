@@ -1,11 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { GlobusService } from '../globus.service';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {TransferData} from '../models/transfer-data';
 import {Config} from '../app.component';
 import * as ConfigJson from '../../assets/config.json';
 
-import {NgForOf, NgIf} from '@angular/common';
+
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
@@ -19,33 +19,35 @@ import PKCE from 'js-pkce';
     selector: 'app-interface',
     standalone: true,
     imports: [
-        TranslateModule,
-        MatToolbarModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        NgIf,
-        ReactiveFormsModule,
-        NgForOf
-    ],
+    TranslateModule,
+    MatToolbarModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    ReactiveFormsModule
+],
     templateUrl: './interface.component.html',
     styleUrls: ['./interface.component.css']
 })
 export class InterfaceComponent implements OnInit {
+    private globusService = inject(GlobusService);
+    private translatePar = inject(TranslateService);
+
 
     translate: TranslateService;
     @Input() redirectURL: string;
     @Output() newItemEvent = new EventEmitter<TransferData>();
     transferData: TransferData;
     languages: FormControl;
-    langArray: Array<any> = [];
+    langArray: any[] = [];
     signedUrlData: any;
     PkceAuth: PKCE;
 
     config: Config = (ConfigJson as any).default;
 
 
-  constructor(private globusService: GlobusService,
-              private translatePar: TranslateService) {
+  constructor() {
+      const translatePar = this.translatePar;
+
       this.translate = translatePar;
       this.translate.addLangs(['en', 'fr']);
       this.translate.setDefaultLang('en');

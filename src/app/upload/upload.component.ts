@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {ConfigService} from '../config.service';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
-import {NgForOf, NgIf} from '@angular/common';
+
 import {ReactiveFormsModule} from '@angular/forms';
 import {InterfaceComponent} from '../interface/interface.component';
 import {MatTabsModule} from '@angular/material/tabs';
@@ -23,22 +23,20 @@ import {TransferData} from '../models/transfer-data';
     MatToolbarModule,
     MatFormFieldModule,
     MatSelectModule,
-    NgIf,
     ReactiveFormsModule,
-    NgForOf,
     InterfaceComponent,
     MatTabsModule,
     SearchEndpointComponent,
     PersonalConnectComponent,
     RecentlyViewedComponentComponent,
     ReferencedComponent
-  ],
+],
   templateUrl: './upload.component.html',
   styleUrls: ['./upload.component.css']
 })
 export class UploadComponent implements OnInit {
+  private config = inject(ConfigService);
 
-  constructor(private config: ConfigService) { }
   redirectURL: string;
   dataTransfer: TransferData;
   action: boolean; // true for upload

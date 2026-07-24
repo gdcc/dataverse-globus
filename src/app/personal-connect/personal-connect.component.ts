@@ -4,7 +4,6 @@ import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
-import {NgForOf, NgIf} from '@angular/common';
 import {ReactiveFormsModule} from '@angular/forms';
 import {NavigateTemplateComponent} from '../navigate-template/navigate-template.component';
 import {EndpointTemplateComponent} from '../endpoint-template/endpoint-template.component';
@@ -25,9 +24,7 @@ interface SelFilesType {
     MatToolbarModule,
     MatFormFieldModule,
     MatSelectModule,
-    NgIf,
     ReactiveFormsModule,
-    NgForOf,
     NavigateTemplateComponent,
     EndpointTemplateComponent
   ],
@@ -42,7 +39,7 @@ export class PersonalConnectComponent implements OnChanges, OnInit {
   @Input() type: number; // 0 - left, 1 - right, 2 - center
   load: boolean;
   selectedEndPoint: any;
-  personalConnectEndpoints: Array<any>;
+  personalConnectEndpoints: any[];
 
   ngOnInit(): void {
     this.load = false;

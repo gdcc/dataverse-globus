@@ -1,21 +1,22 @@
 <app-endpoint-template (newItemEvent)="setSelectedEndpoint($event)"
-                       (loadedEvent)="ifLoaded($event)"
-                       [type]="type"
-                       [transferData] = "dataTransfer"
-                       [typeOfTab]="0">
+  (loadedEvent)="ifLoaded($event)"
+  [type]="type"
+  [transferData] = "dataTransfer"
+  [typeOfTab]="0">
 </app-endpoint-template>
 
-<div *ngIf="!personalConnectExist() && load">
+@if (!personalConnectExist() && load) {
+  <div>
     <h3 class="my-translated-paragraph">
-        {{'PERSONAL.ERROR' | translate}}
+      {{'PERSONAL.ERROR' | translate}}
     </h3>
-</div>
+  </div>
+}
 
-<ng-container *ngIf="personalConnectExist()">
-    <app-navigate-template-download       [transferData]="dataTransfer"
-                                          [selectedEndPoint]="selectedEndPoint"
-                                          [type]="type"
-                                    >
-    </app-navigate-template-download>
-
-</ng-container>
+@if (personalConnectExist()) {
+  <app-navigate-template-download       [transferData]="dataTransfer"
+    [selectedEndPoint]="selectedEndPoint"
+    [type]="type"
+    >
+  </app-navigate-template-download>
+}

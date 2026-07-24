@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject } from '@angular/core';
 import {TransferData} from '../models/transfer-data';
 import {GlobusService} from '../globus.service';
 import {TranslateModule} from '@ngx-translate/core';
@@ -28,10 +28,12 @@ import {catchError, mergeMap} from 'rxjs/operators';
   styleUrls: ['./endpoint-template.component.css']
 })
 export class EndpointTemplateComponent implements OnInit, OnChanges {
+  private globusService = inject(GlobusService);
+
 
   selectedEndPoint: any;
 
-  personalConnectEndpoints: Array<any>;
+  personalConnectEndpoints: any[];
 
   @Input() type: number;
   @Input() transferData: TransferData;
@@ -40,7 +42,6 @@ export class EndpointTemplateComponent implements OnInit, OnChanges {
   @Output() loadedEvent = new EventEmitter<any>();
 
   selectedDirectory: string;
-  constructor(private globusService: GlobusService) { }
   load: boolean;
 
   ngOnInit(): void {
@@ -90,7 +91,7 @@ export class EndpointTemplateComponent implements OnInit, OnChanges {
     }
   }
   getAllEndpoints() {
-    const array = new Array();
+    const array: Observable<any>[] = [];
     for (const endPoint of this.transferData.referenceEndpointsWithPaths) {
       const userOtherAccessToken = this.transferData.userAccessTokenData.other_tokens[0].access_token;
       const url = 'https://transfer.api.globusonline.org/v0.10/endpoint/' + endPoint;

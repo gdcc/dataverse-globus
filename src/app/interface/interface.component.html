@@ -1,17 +1,20 @@
-<ng-container class="interface-container" *ngIf="transferData.load">
-  <mat-toolbar class="interface-header">
-    <mat-toolbar-row>
-      <h1 class="header-text title">{{'INTERFACE.TITLE' | translate}}</h1>
-      <span class="fill-space"></span>
+@if (transferData.load) {
+  <ng-container class="interface-container">
+    <mat-toolbar class="interface-header">
+      <mat-toolbar-row>
+        <h1 class="header-text title">{{'INTERFACE.TITLE' | translate}}</h1>
+        <span class="fill-space"></span>
         <mat-form-field>
-            <mat-select placeholder="{{'INTERFACE.LANG' | translate}}"  [formControl]="languages"
-                        (selectionChange)="onLanguageChange($event.value)">
-                <mat-option *ngFor="let lng of langArray" [value]="lng.value" >
-                    {{ lng.viewValue }}
-                </mat-option>
-            </mat-select>
+          <mat-select placeholder="{{'INTERFACE.LANG' | translate}}"  [formControl]="languages"
+            (selectionChange)="onLanguageChange($event.value)">
+            @for (lng of langArray; track lng) {
+              <mat-option [value]="lng.value" >
+                {{ lng.viewValue }}
+              </mat-option>
+            }
+          </mat-select>
         </mat-form-field>
-
-    </mat-toolbar-row>
-  </mat-toolbar>
-</ng-container>
+      </mat-toolbar-row>
+    </mat-toolbar>
+  </ng-container>
+}

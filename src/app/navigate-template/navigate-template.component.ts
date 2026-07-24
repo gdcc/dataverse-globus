@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
+import { Component, Input, OnChanges, OnInit, inject } from '@angular/core';
 import {catchError, mergeMap} from 'rxjs/operators';
 import {Observable, forkJoin, of, throwError} from 'rxjs';
 import {GlobusService} from '../globus.service';
@@ -7,7 +7,7 @@ import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldControl, MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
-import {NgForOf, NgIf} from '@angular/common';
+
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatIconModule} from '@angular/material/icon';
@@ -32,9 +32,7 @@ export interface SelFilesType {
     MatToolbarModule,
     MatFormFieldModule,
     MatSelectModule,
-    NgIf,
     ReactiveFormsModule,
-    NgForOf,
     MatGridListModule,
     MatIconModule,
     MatCheckboxModule,
@@ -43,15 +41,14 @@ export interface SelFilesType {
     MatInputModule,
     CdkVirtualScrollViewport,
     CdkFixedSizeVirtualScroll
-  ],
+],
   templateUrl: './navigate-template.component.html',
   styleUrls: ['./navigate-template.component.css']
 })
 export class NavigateTemplateComponent implements OnInit, OnChanges {
+  private globusService = inject(GlobusService);
+  snackBar = inject(MatSnackBar);
 
-  constructor(private globusService: GlobusService,
-              public snackBar: MatSnackBar) {
-  }
 
   @Input() transferData: TransferData;
   @Input() selectedEndPoint: any;
@@ -59,13 +56,13 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
   checkFlag: boolean;
   personalDirectories: any;
   selectedOptions: any;
-  selectedFiles: Array<SelFilesType>;
+  selectedFiles: SelFilesType[];
   selectedDirectory: any;
-  listOfAllFiles: Array<string>;
-  listOfFileNames: Array<string>;
-  listOfAllStorageIdentifiers: Array<string>;
-  listOfAllStorageIdentifiersPaths: Array<string>;
-  listOfDirectoryLabels: Array<string>;
+  listOfAllFiles: string[];
+  listOfFileNames: string[];
+  listOfAllStorageIdentifiers: string[];
+  listOfAllStorageIdentifiersPaths: string[];
+  listOfDirectoryLabels: string[];
   taskId: string;
   accessEndpointFlag: boolean;
   load: boolean;
@@ -415,7 +412,7 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
     }
   }
 
-  submit(array: Observable<Object> | Observable<Object>[]) {
+  submit(array: Observable<object> | Observable<object>[]) {
     let urlPath = '';
     let body: any = null;
     if (this.transferData.managed) {

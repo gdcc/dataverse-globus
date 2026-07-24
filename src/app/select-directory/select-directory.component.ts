@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 
 import {GlobusService} from '../globus.service';
 import {mergeMap} from 'rxjs/operators';
@@ -7,7 +7,7 @@ import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
-import {NgForOf, NgIf} from '@angular/common';
+
 import {ReactiveFormsModule} from '@angular/forms';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatIconModule} from '@angular/material/icon';
@@ -18,26 +18,24 @@ import {MAT_DIALOG_DATA, MatDialogModule} from '@angular/material/dialog';
   selector: 'app-select-directory',
     standalone: true,
     imports: [
-        TranslateModule,
-        MatToolbarModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        NgIf,
-        ReactiveFormsModule,
-        NgForOf,
-        MatGridListModule,
-        MatIconModule,
-        MatListModule,
-        MatDialogModule
-    ],
+    TranslateModule,
+    MatToolbarModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    ReactiveFormsModule,
+    MatGridListModule,
+    MatIconModule,
+    MatListModule,
+    MatDialogModule
+],
   templateUrl: './select-directory.component.html',
   styleUrls: ['./select-directory.component.css']
 })
 export class SelectDirectoryComponent implements OnInit {
+  passingData = inject(MAT_DIALOG_DATA);
+  private globusService = inject(GlobusService);
 
-  constructor(@Inject(MAT_DIALOG_DATA) public passingData: any,
-              private globusService: GlobusService) { }
-  dirs: Array<any>;
+  dirs: any[];
   @Output() updateSelectedDirectoryEvent = new EventEmitter<string>();
 
   ngOnInit(): void {

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 import { of, merge, from} from 'rxjs';
@@ -6,9 +6,8 @@ import { filter, mergeMap} from 'rxjs/operators';
 
 @Injectable()
 export class GlobusService {
+  private http = inject(HttpClient);
 
-  constructor(private http: HttpClient) {
-  }
 
   getGlobus(url: string, key: string) {
     const httpOptions = {
@@ -62,7 +61,7 @@ export class GlobusService {
   }
 
   postDataverse(url: string, body: FormData) {
-    let httpOptions = {};
+    const httpOptions = {};
 
     return this.http.post(url, body, httpOptions);
   }
@@ -137,7 +136,7 @@ export class GlobusService {
                       submissionId, selectedEndPointId, globusEndpoint, userOtherAccessToken) {
 
     const url = 'https://transfer.api.globusonline.org/v0.10/transfer';
-    const taskItemsArray = new Array();
+    const taskItemsArray: any[] = [];
 
     for (let i = 0; i < listOfAllFiles.length; i++) {
       const storageId = listOfAllStorageIdentifiersPaths[i].substring(listOfAllStorageIdentifiersPaths[i].length - 24);
@@ -165,7 +164,7 @@ export class GlobusService {
   submitTransferToUser(listOfAllFiles, listOfAllPaths, submissionId, datasetDirectory, selectedDirectory, globusEndpoint, selectedEndpoint, userOtherAccessToken) {
 
     const url = 'https://transfer.api.globusonline.org/v0.10/transfer';
-    const taskItemsArray = new Array();
+    const taskItemsArray: any[] = [];
     const lastCharacter = selectedDirectory.slice(selectedDirectory.length - 1);
     if (lastCharacter !== '/') {
       selectedDirectory = selectedDirectory + '/';

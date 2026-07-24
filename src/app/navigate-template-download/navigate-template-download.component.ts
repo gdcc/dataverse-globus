@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
+import { Component, Input, OnChanges, OnInit, inject } from '@angular/core';
 import {GlobusService} from '../globus.service';
 import {TransferData} from '../models/transfer-data';
 import {catchError, mergeMap} from 'rxjs/operators';
@@ -10,7 +10,7 @@ import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
-import {NgForOf, NgIf} from '@angular/common';
+
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {MatGridListModule} from '@angular/material/grid-list';
@@ -33,32 +33,29 @@ export interface PassingDataSelectType {
   selector: 'app-navigate-template-download',
   standalone: true,
     imports: [
-        TranslateModule,
-        MatToolbarModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        NgIf,
-        ReactiveFormsModule,
-        NgForOf,
-        MatGridListModule,
-        MatIconModule,
-        MatCheckboxModule,
-        MatListModule,
-        FormsModule,
-        MatInput,
-        CdkFixedSizeVirtualScroll,
-        CdkVirtualScrollViewport
-    ],
+    TranslateModule,
+    MatToolbarModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    ReactiveFormsModule,
+    MatGridListModule,
+    MatIconModule,
+    MatCheckboxModule,
+    MatListModule,
+    FormsModule,
+    MatInput,
+    CdkFixedSizeVirtualScroll,
+    CdkVirtualScrollViewport
+],
   templateUrl: './navigate-template-download.component.html',
   styleUrls: ['./navigate-template-download.component.css']
 })
 export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
+  private globusService = inject(GlobusService);
+  dialog = inject(MatDialog);
+  snackBar = inject(MatSnackBar);
+  private configService = inject(ConfigService);
 
-  constructor(private globusService: GlobusService,
-              public dialog: MatDialog,
-              public snackBar: MatSnackBar,
-              private configService: ConfigService) {
-  }
 
   @Input() transferData: TransferData;
   @Input() selectedEndPoint: any;
@@ -66,11 +63,11 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
 
   public dialogRef: MatDialogRef<SelectDirectoryComponent>;
   selectedDirectory: string;
-  files: Array<string>;
-  paths: Array<any>;
+  files: string[];
+  paths: any[];
   levels: Stack<any>;
   levelsDownloadTo: Stack<any>;
-  allDataFiles: Array<any>;
+  allDataFiles: any[];
 
   loaded: boolean;
   tree: any;
@@ -79,11 +76,11 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   personalDirectories: any;
   downloadToDirectories: any;
   selectedOptions: any;
-  selectedFiles: Array<any>;
+  selectedFiles: any[];
   isSingleClick: boolean;
-  storageIdentifiers: Array<string>;
-  listOfAllFiles: Array<any>;
-  listOfAllPaths: Array<string>;
+  storageIdentifiers: string[];
+  listOfAllFiles: any[];
+  listOfAllPaths: string[];
   taskId: string;
   ruleId: string;
   clientToken: any;
@@ -320,7 +317,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   removeAllFromSelected(directory) {
     this.selectedFiles = new Array<any>();
     directory.writeValue(null);
-    this.selectedOptions = new Array();
+    this.selectedOptions = [];
     this.checkFlag = false;
   }
 
@@ -491,7 +488,7 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
               () => {
                 console.log('Transfer submitted');
 
-                let snackBarRef = this.snackBar.open('The transfer was submitted', '', {
+                const snackBarRef = this.snackBar.open('The transfer was submitted', '', {
                   duration: 3000
                 });
 

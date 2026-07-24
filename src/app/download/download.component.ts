@@ -1,18 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {ConfigService} from '../config.service';
 import {TransferData} from '../models/transfer-data';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
-import {NgForOf, NgIf} from '@angular/common';
+
 import {ReactiveFormsModule} from '@angular/forms';
 import {InterfaceComponent} from '../interface/interface.component';
 import {MatTabsModule} from '@angular/material/tabs';
 import {SearchEndpointComponent} from '../search-endpoint/search-endpoint.component';
 import {PersonalConnectDownloadComponent} from '../personal-connect-download/personal-connect-download.component';
 import {RecentlyViewedDownloadComponent} from '../recently-viewed-download/recently-viewed-download.component';
-import {ReferencedComponent} from "../referenced/referenced.component";
 
 @Component({
   selector: 'app-download',
@@ -22,22 +21,19 @@ import {ReferencedComponent} from "../referenced/referenced.component";
     MatToolbarModule,
     MatFormFieldModule,
     MatSelectModule,
-    NgIf,
     ReactiveFormsModule,
-    NgForOf,
     InterfaceComponent,
     MatTabsModule,
     SearchEndpointComponent,
     PersonalConnectDownloadComponent,
-    RecentlyViewedDownloadComponent,
-    ReferencedComponent
-  ],
+    RecentlyViewedDownloadComponent
+],
   templateUrl: './download.component.html',
   styleUrls: ['./download.component.css']
 })
 export class DownloadComponent implements OnInit {
+  private config = inject(ConfigService);
 
-  constructor(private config: ConfigService) { }
   redirectURL: string;
   dataTransfer: TransferData;
   action: boolean; // false for download
