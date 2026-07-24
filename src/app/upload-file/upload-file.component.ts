@@ -5,6 +5,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
 
 import {ReactiveFormsModule} from '@angular/forms';
+import {GlobusDirective} from '../globus.directive';
 
 
 @Component({
@@ -15,7 +16,8 @@ import {ReactiveFormsModule} from '@angular/forms';
     MatToolbarModule,
     MatFormFieldModule,
     MatSelectModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    GlobusDirective
 ],
   templateUrl: './upload-file.component.html',
   styleUrls: ['./upload-file.component.css']
