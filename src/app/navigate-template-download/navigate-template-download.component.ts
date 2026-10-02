@@ -89,8 +89,13 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
   clientToken: any;
   accessEndpointFlag: boolean;
 
-
-
+  normalizeGlobusPath(path: string): string {
+    if (path == null) {
+      return path;
+    }
+    const decoded = decodeURIComponent(path);
+    return decoded.startsWith('/') ? decoded : '/' + decoded;
+  }
 
   ngOnInit(): void {
     if (this.selectedEndPoint.default_directory == null) {
@@ -199,8 +204,10 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
               // this.storageIdentifiers.push(obj.dataFile.storageIdentifier.split(':')[2]);
               this.storageIdentifiers.push(obj.dataFile.storageIdentifier.split(':').pop());
             } else {
-              const ind =  this.transferData.files[f].indexOf('/');
-              this.transferData.globusEndpoint = this.transferData.files[f].substring(0, ind);
+              const rawFileValue = this.transferData.files[f];
+              const normalizedValue = this.normalizeGlobusPath(rawFileValue);
+              const ind = normalizedValue.indexOf('/');
+              this.transferData.globusEndpoint = normalizedValue.substring(0, ind);
 
               let temp = obj.dataFile.storageIdentifier.split('//').pop();
               const index = temp.indexOf('/');
@@ -261,8 +268,6 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
       return false;
     }
   }
-
-
 
   selectAll($event, directory) {
     this.checkFlag = false;
@@ -534,7 +539,6 @@ export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {
             }
         );
   }
-
 
   preparedForTransfer() {
     if (this.selectedFiles.length > 0) {
