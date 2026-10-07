@@ -1,10 +1,10 @@
 import {Component, Input, OnChanges, OnInit} from '@angular/core';
-import {TransferData} from '../upload/upload.component';
+import {TransferData} from '../models/transfer-data';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
-import {NgForOf, NgIf} from '@angular/common';
+
 import {ReactiveFormsModule} from '@angular/forms';
 import {EndpointTemplateComponent} from '../endpoint-template/endpoint-template.component';
 import {NavigateTemplateDownloadComponent} from '../navigate-template-download/navigate-template-download.component';
@@ -17,12 +17,10 @@ import {NavigateTemplateDownloadComponent} from '../navigate-template-download/n
     MatToolbarModule,
     MatFormFieldModule,
     MatSelectModule,
-    NgIf,
     ReactiveFormsModule,
-    NgForOf,
     EndpointTemplateComponent,
     NavigateTemplateDownloadComponent
-  ],
+],
   templateUrl: './personal-connect-download.component.html',
   styleUrls: ['./personal-connect-download.component.css']
 })
@@ -34,7 +32,7 @@ export class PersonalConnectDownloadComponent implements OnInit, OnChanges {
   @Input() type: number; // 0 - left, 1 - right, 2 - center
   load: boolean;
   selectedEndPoint: any;
-  personalConnectEndpoints: Array<object>;
+  personalConnectEndpoints: any[];
   selectedDirectory: string;
 
   ngOnInit(): void {

@@ -8,7 +8,7 @@ describe('RecentlyViewedComponentComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ RecentlyViewedComponentComponent ]
+      imports: [ RecentlyViewedComponentComponent ]
     })
     .compileComponents();
   }));

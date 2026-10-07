@@ -5,15 +5,19 @@
                        [typeOfTab]="1">
 </app-endpoint-template>
 
-<div class="center" *ngIf="!recentlyViewedExist() && load">
+@if (!recentlyViewedExist() && load) {
+<div class="center">
     <h3 class="my-translated-paragraph">
         {{'RECENT.ERROR' | translate}}
     </h3>
 </div>
+}
 
-<ng-container class="interface-container"*ngIf="recentlyViewedExist() && load ">
+@if (recentlyViewedExist() && load) {
+<ng-container class="interface-container">
     <app-navigate-template-download [transferData]="dataTransfer"
                                     [selectedEndPoint]="selectedEndPoint">
     </app-navigate-template-download>
 </ng-container>
+}
 

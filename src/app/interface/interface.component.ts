@@ -1,11 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { GlobusService } from '../globus.service';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
-import {TransferData} from '../upload/upload.component';
+import {TransferData} from '../models/transfer-data';
 import {Config} from '../app.component';
 import * as ConfigJson from '../../assets/config.json';
 
-import {NgForOf, NgIf} from '@angular/common';
+
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
@@ -19,33 +19,36 @@ import PKCE from 'js-pkce';
     selector: 'app-interface',
     standalone: true,
     imports: [
-        TranslateModule,
-        MatToolbarModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        NgIf,
-        ReactiveFormsModule,
-        NgForOf
-    ],
+    TranslateModule,
+    MatToolbarModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    ReactiveFormsModule
+],
     templateUrl: './interface.component.html',
     styleUrls: ['./interface.component.css']
 })
 export class InterfaceComponent implements OnInit {
+    private globusService = inject(GlobusService);
+    private translatePar = inject(TranslateService);
+
 
     translate: TranslateService;
     @Input() redirectURL: string;
     @Output() newItemEvent = new EventEmitter<TransferData>();
     transferData: TransferData;
     languages: FormControl;
-    langArray: Array<any> = [];
+    langArray: any[] = [];
     signedUrlData: any;
     PkceAuth: PKCE;
+    state: string;
 
     config: Config = (ConfigJson as any).default;
 
 
-  constructor(private globusService: GlobusService,
-              private translatePar: TranslateService) {
+  constructor() {
+      const translatePar = this.translatePar;
+
       this.translate = translatePar;
       this.translate.addLangs(['en', 'fr']);
       this.translate.setDefaultLang('en');
@@ -53,7 +56,7 @@ export class InterfaceComponent implements OnInit {
       this.langArray.push({value: 'fr', viewValue: 'Français'});
 
       const browserLang = this.translate.getBrowserLang();
-      if (browserLang != null) {
+      if (browserLang) {
           this.translate.use(browserLang.match(/en|fr/) ? browserLang : 'en');
       }
       this.languages = new FormControl(this.translate.currentLang);
@@ -72,11 +75,24 @@ export class InterfaceComponent implements OnInit {
           //'urn:globus:auth:scope:transfer.api.globus.org:all'  // Update with any scopes you would need, e.g. transfer
       });
 
+      this.globusService.consentRequired.subscribe(scopes => {
+          const newScopes = scopes.join(' ') + ' openid email profile';
+          this.PkceAuth = new PKCE({
+              client_id: this.config.globusClientId,
+              redirect_uri: this.redirectURL,
+              authorization_endpoint: 'https://auth.globus.org/v2/oauth2/authorize',
+              token_endpoint: 'https://auth.globus.org/v2/oauth2/token',
+              requested_scopes: newScopes
+          });
+          const additionalParams = {state: this.state};
+          window.location.replace(this.PkceAuth.authorizeUrl(additionalParams));
+      });
+
         this.transferData = {} as TransferData;
         this.transferData.load = false;
         this.title = 'Globus';
 
-        this.transferData.datasetDirectory = null;
+        this.transferData.datasetDirectory = '';
         const code = this.globusService.getParameterByName('code',null);
         const callback = this.globusService.getParameterByName('callback',null);
         const dvLocale = this.globusService.getParameterByName('dvLocale',null);
@@ -84,9 +100,8 @@ export class InterfaceComponent implements OnInit {
         if (typeof callback !== 'undefined' && callback != null) {
           const code = this.getCode(callback, dvLocale);
         } else {
-            const state = this.globusService.getParameterByName('state',null);
-            const decodedState = this.decodeCallback(state);
-            this.getUserAccessToken(code, state);
+            this.state = this.globusService.getParameterByName('state',null);
+            this.getUserAccessToken(code, this.state);
 
         }
     }
@@ -99,11 +114,15 @@ export class InterfaceComponent implements OnInit {
                 this.translate.use('fr');
             } else {
                 const browserLang = this.translate.getBrowserLang();
-                this.translate.use(browserLang.match(/en|fr/) ? browserLang : 'en');
+                if (browserLang) {
+                    this.translate.use(browserLang.match(/en|fr/) ? browserLang : 'en');
+                }
             }
         } else {
             const browserLang = this.translate.getBrowserLang();
-            this.translate.use(browserLang.match(/en|fr/) ? browserLang : 'en');
+            if (browserLang) {
+                this.translate.use(browserLang.match(/en|fr/) ? browserLang : 'en');
+            }
         }
     }
     onLanguageChange(language: string) {
@@ -149,6 +168,7 @@ export class InterfaceComponent implements OnInit {
         const decodedCallback = this.decodeCallback(callback);
         let state = decodedCallback + '&dvLocale=' + dvLocale;
         state = btoa(state);
+        this.state = state;
         const clientId = this.config.globusClientId;
 
         const additionalParams = {state: state};

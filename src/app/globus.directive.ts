@@ -1,7 +1,8 @@
 import { Directive, Output, EventEmitter, HostBinding, HostListener } from '@angular/core';
 
 @Directive({
-  selector: '[appGlobus]'
+  selector: '[appGlobus]',
+  standalone: true
 })
 export class GlobusDirective {
 
@@ -9,8 +10,8 @@ export class GlobusDirective {
 
   @Output() onFileDropped = new EventEmitter<any>();
 
-  @HostBinding('style.background-color') private background = '#f5fcff';
-  @HostBinding('style.opacity') private opacity = '1';
+  @HostBinding('style.background-color') public background = '#f5fcff';
+  @HostBinding('style.opacity') public opacity = '1';
 
   // Dragover listener
   @HostListener('dragover', ['$event']) onDragOver(evt) {

@@ -8,7 +8,7 @@ describe('PersonalConnectComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ PersonalConnectComponent ]
+      imports: [ PersonalConnectComponent ]
     })
     .compileComponents();
   }));

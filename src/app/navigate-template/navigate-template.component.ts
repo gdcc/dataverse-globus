@@ -1,13 +1,13 @@
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
-import {catchError, flatMap} from 'rxjs/operators';
+import { Component, Input, OnChanges, OnInit, inject } from '@angular/core';
+import {catchError, mergeMap} from 'rxjs/operators';
 import {Observable, forkJoin, of, throwError} from 'rxjs';
 import {GlobusService} from '../globus.service';
-import {TransferData} from '../upload/upload.component';
+import {TransferData} from '../models/transfer-data';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldControl, MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
-import {NgForOf, NgIf} from '@angular/common';
+
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatIconModule} from '@angular/material/icon';
@@ -32,9 +32,7 @@ export interface SelFilesType {
     MatToolbarModule,
     MatFormFieldModule,
     MatSelectModule,
-    NgIf,
     ReactiveFormsModule,
-    NgForOf,
     MatGridListModule,
     MatIconModule,
     MatCheckboxModule,
@@ -43,15 +41,14 @@ export interface SelFilesType {
     MatInputModule,
     CdkVirtualScrollViewport,
     CdkFixedSizeVirtualScroll
-  ],
+],
   templateUrl: './navigate-template.component.html',
   styleUrls: ['./navigate-template.component.css']
 })
 export class NavigateTemplateComponent implements OnInit, OnChanges {
+  private globusService = inject(GlobusService);
+  snackBar = inject(MatSnackBar);
 
-  constructor(private globusService: GlobusService,
-              public snackBar: MatSnackBar) {
-  }
 
   @Input() transferData: TransferData;
   @Input() selectedEndPoint: any;
@@ -59,13 +56,13 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
   checkFlag: boolean;
   personalDirectories: any;
   selectedOptions: any;
-  selectedFiles: Array<SelFilesType>;
+  selectedFiles: SelFilesType[];
   selectedDirectory: any;
-  listOfAllFiles: Array<string>;
-  listOfFileNames: Array<string>;
-  listOfAllStorageIdentifiers: Array<string>;
-  listOfAllStorageIdentifiersPaths: Array<string>;
-  listOfDirectoryLabels: Array<string>;
+  listOfAllFiles: string[];
+  listOfFileNames: string[];
+  listOfAllStorageIdentifiers: string[];
+  listOfAllStorageIdentifiersPaths: string[];
+  listOfDirectoryLabels: string[];
   taskId: string;
   accessEndpointFlag: boolean;
   load: boolean;
@@ -83,7 +80,7 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
 
   startComponent() {
     this.load = false;
-    this.ruleId = null;
+    this.ruleId = '';
     this.clientToken = null;
     this.accessEndpointFlag = false;
     this.selectedFiles = new Array<SelFilesType>();
@@ -177,7 +174,7 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
           this.selectedFiles.splice(indx, 1);
         }
       }
-      this.selectedOptions = new Array<object>();
+      this.selectedOptions = new Array<any>();
       directory.writeValue(this.selectedOptions);
     }
   }
@@ -189,7 +186,7 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
     this.globusService.getDirectory(this.selectedDirectory,
         this.selectedEndPoint.id,
         this.transferData.userAccessTokenData.other_tokens[0].access_token)
-        .pipe(flatMap(data => this.upFolderProcess(data)))
+        .pipe(mergeMap(data => this.upFolderProcess(data)))
         .subscribe(
             data => {
               if (data !== null) {
@@ -223,8 +220,8 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
   }
 
   processDirectories(data) {
-    this.selectedOptions = new Array<object>();
-    this.personalDirectories = new Array<object>();
+    this.selectedOptions = new Array<any>();
+    this.personalDirectories = new Array<any>();
     this.selectedDirectory = data.path;
     for (const obj of data.DATA) {
       this.personalDirectories.push(obj);
@@ -280,7 +277,7 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
   openDirectory($event, item, directory, check) {
     this.preventSingleClick = true;
     clearTimeout(this.timer);
-    this.selectedOptions = new Array<object>();
+    this.selectedOptions = new Array<any>();
     if (item.type === 'dir') {
       this.selectedDirectory = this.selectedDirectory + item.name;
 
@@ -295,7 +292,7 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
                 console.log(error);
               },
               () => {
-                this.selectedOptions = new Array<object>();
+                this.selectedOptions = new Array<any>();
                 directory.writeValue(this.selectedOptions);
                 check.checked = false;
               }
@@ -337,8 +334,8 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
       this.snackBar.open('Preparing transfer', '', {
         duration: 3000
       });
-      const directoriesArray = [];
-      const labelsArray = [];
+      const directoriesArray: string[] = [];
+    const labelsArray: string[] = [];
 
       for (const obj of this.selectedFiles) {
         if (obj.fileNameObject.type === 'dir') {
@@ -372,7 +369,7 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
   findAllSubFiles(directory, i, labelsArray) {
     this.globusService.getDirectory(directory[i],
         this.selectedEndPoint.id, this.transferData.userAccessTokenData.other_tokens[0].access_token)
-        .pipe(flatMap(d => this.globusService.getInnerDirectories(d, this.selectedEndPoint.id,
+        .pipe(mergeMap(d => this.globusService.getInnerDirectories(d, this.selectedEndPoint.id,
             this.transferData.userAccessTokenData.other_tokens[0].access_token)))
         .subscribe(
             dir => {
@@ -415,9 +412,9 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
     }
   }
 
-  submit(array: Observable<Object> | Observable<Object>[]) {
+  submit(array: Observable<object> | Observable<object>[]) {
     let urlPath = '';
-    let body = null;
+    let body: any = null;
     if (this.transferData.managed) {
 
       for (const urlObject of this.transferData.signedUrls) {
@@ -435,7 +432,7 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
       }
     }
     const data = forkJoin(array)
-        .pipe(flatMap(obj => {
+        .pipe(mergeMap(obj => {
           const user = obj[0];
           if (this.transferData.managed) {
             body = '{' +
@@ -464,8 +461,8 @@ export class NavigateTemplateComponent implements OnInit, OnChanges {
          }));
     if (this.transferData.managed) {
          data.
-          pipe(flatMap(data => this.my_func2(data)))
-              .pipe(flatMap(data => this.my_func(data)))
+          pipe(mergeMap(data => this.my_func2(data)))
+.pipe(mergeMap(data => this.my_func(data)))
               .subscribe(
                   data => {
                     this.taskId = data['task_id'];

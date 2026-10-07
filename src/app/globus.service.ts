@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
-import { of, merge, from} from 'rxjs';
-import { filter, flatMap} from 'rxjs/operators';
+import { of, merge, from, throwError} from 'rxjs';
+import { filter, mergeMap, catchError} from 'rxjs/operators';
 
 @Injectable()
 export class GlobusService {
+  private http = inject(HttpClient);
+  consentRequired = new EventEmitter<string[]>();
 
-  constructor(private http: HttpClient) {
-  }
 
   getGlobus(url: string, key: string) {
     const httpOptions = {
@@ -16,7 +16,14 @@ export class GlobusService {
         Authorization: key
       })
     };
-    return this.http.get(url, httpOptions);
+    return this.http.get(url, httpOptions).pipe(
+        catchError(error => {
+          if (error.status === 403 && error.error && error.error.code === 'ConsentRequired') {
+            this.consentRequired.emit(error.error.required_scopes);
+          }
+          return throwError(() => error);
+        })
+    );
   }
 
   putGlobus(url: string, body: string, key: string) {
@@ -57,12 +64,19 @@ export class GlobusService {
       }
 
     };
-    return this.http.post(url, body, httpOptions);
+    return this.http.post(url, body, httpOptions).pipe(
+        catchError(error => {
+          if (error.status === 403 && (error.error && error.error.code === 'ConsentRequired')) {
+            this.consentRequired.emit(error.error.required_scopes);
+          }
+          return throwError(() => error);
+        })
+    );
     // return this.http.post(url,body, httpOptions);
   }
 
   postDataverse(url: string, body: FormData) {
-    let httpOptions = {};
+    const httpOptions = {};
 
     return this.http.post(url, body, httpOptions);
   }
@@ -79,7 +93,7 @@ export class GlobusService {
     return this.http.get(url);
   }
 
-  getParameterByName(name, url) {
+  getParameterByName(name: string, url: string | null): string {
     if (url == null) {
       url = window.location.href;
     }
@@ -87,7 +101,7 @@ export class GlobusService {
     const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
     const results = regex.exec(url);
     if (!results) {
-      return null;
+      return '';
     }
     if (!results[2]) {
       return '';
@@ -117,10 +131,10 @@ export class GlobusService {
       const path = directory.path;
       return merge(
           of(directory),
-          from(directory.DATA)
+          from(directory.DATA as any[])
               .pipe(filter(d => d['type'] === 'dir'))
-              .pipe(flatMap(obj => this.getDirectory(path + obj['name'], selectedEndPointId, userOtherAccessToken)))
-              .pipe(flatMap(d => this.getInnerDirectories(d, selectedEndPointId, userOtherAccessToken))));
+              .pipe(mergeMap(obj => this.getDirectory(path + obj['name'], selectedEndPointId, userOtherAccessToken)))
+              .pipe(mergeMap(d => this.getInnerDirectories(d, selectedEndPointId, userOtherAccessToken))));
     } else {
       return of(directory);
     }
@@ -137,7 +151,7 @@ export class GlobusService {
                       submissionId, selectedEndPointId, globusEndpoint, userOtherAccessToken) {
 
     const url = 'https://transfer.api.globusonline.org/v0.10/transfer';
-    const taskItemsArray = new Array();
+    const taskItemsArray: any[] = [];
 
     for (let i = 0; i < listOfAllFiles.length; i++) {
       const storageId = listOfAllStorageIdentifiersPaths[i].substring(listOfAllStorageIdentifiersPaths[i].length - 24);
@@ -165,7 +179,7 @@ export class GlobusService {
   submitTransferToUser(listOfAllFiles, listOfAllPaths, submissionId, datasetDirectory, selectedDirectory, globusEndpoint, selectedEndpoint, userOtherAccessToken) {
 
     const url = 'https://transfer.api.globusonline.org/v0.10/transfer';
-    const taskItemsArray = new Array();
+    const taskItemsArray: any[] = [];
     const lastCharacter = selectedDirectory.slice(selectedDirectory.length - 1);
     if (lastCharacter !== '/') {
       selectedDirectory = selectedDirectory + '/';

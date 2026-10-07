@@ -8,7 +8,7 @@ describe('NavigateTemplateComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ NavigateTemplateComponent ]
+      imports: [ NavigateTemplateComponent ]
     })
     .compileComponents();
   }));

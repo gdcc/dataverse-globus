@@ -8,7 +8,7 @@ describe('NavigateDirectoriesComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ NavigateDirectoriesComponent ]
+      imports: [ NavigateDirectoriesComponent ]
     })
     .compileComponents();
   }));

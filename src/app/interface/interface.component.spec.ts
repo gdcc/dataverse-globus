@@ -8,7 +8,7 @@ describe('InterfaceComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ InterfaceComponent ]
+      imports: [ InterfaceComponent ]
     })
     .compileComponents();
   }));

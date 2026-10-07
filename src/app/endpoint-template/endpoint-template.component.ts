@@ -1,5 +1,5 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
-import {TransferData} from '../upload/upload.component';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject } from '@angular/core';
+import {TransferData} from '../models/transfer-data';
 import {GlobusService} from '../globus.service';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
@@ -9,7 +9,7 @@ import {NgForOf, NgIf} from '@angular/common';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {forkJoin, Observable, Subject, throwError} from 'rxjs';
-import {catchError, flatMap} from 'rxjs/operators';
+import {catchError, mergeMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-endpoint-template',
@@ -28,10 +28,12 @@ import {catchError, flatMap} from 'rxjs/operators';
   styleUrls: ['./endpoint-template.component.css']
 })
 export class EndpointTemplateComponent implements OnInit, OnChanges {
+  private globusService = inject(GlobusService);
+
 
   selectedEndPoint: any;
 
-  personalConnectEndpoints: Array<object>;
+  personalConnectEndpoints: any[];
 
   @Input() type: number;
   @Input() transferData: TransferData;
@@ -40,7 +42,6 @@ export class EndpointTemplateComponent implements OnInit, OnChanges {
   @Output() loadedEvent = new EventEmitter<any>();
 
   selectedDirectory: string;
-  constructor(private globusService: GlobusService) { }
   load: boolean;
 
   ngOnInit(): void {
@@ -49,7 +50,7 @@ export class EndpointTemplateComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
 
-    this.personalConnectEndpoints = new Array<object>();
+    this.personalConnectEndpoints = new Array<any>();
     if (typeof this.transferData.userAccessTokenData !== 'undefined') {
 
       if (this.typeOfTab === 0 || this.typeOfTab === 1) {
@@ -90,7 +91,7 @@ export class EndpointTemplateComponent implements OnInit, OnChanges {
     }
   }
   getAllEndpoints() {
-    const array = new Array();
+    const array: Observable<any>[] = [];
     for (const endPoint of this.transferData.referenceEndpointsWithPaths) {
       const userOtherAccessToken = this.transferData.userAccessTokenData.other_tokens[0].access_token;
       const url = 'https://transfer.api.globusonline.org/v0.10/endpoint/' + endPoint;
@@ -112,7 +113,7 @@ export class EndpointTemplateComponent implements OnInit, OnChanges {
   }
 
   processPersonalConnect(data) {
-    this.personalConnectEndpoints = new Array<object>();
+    this.personalConnectEndpoints = new Array<any>();
     if (this.typeOfTab === 0) {
       for (const obj of data.DATA) {
         if (obj.gcp_connected) {
