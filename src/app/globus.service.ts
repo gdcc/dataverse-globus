@@ -1,12 +1,13 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
-import { of, merge, from} from 'rxjs';
-import { filter, mergeMap} from 'rxjs/operators';
+import { of, merge, from, throwError} from 'rxjs';
+import { filter, mergeMap, catchError} from 'rxjs/operators';
 
 @Injectable()
 export class GlobusService {
   private http = inject(HttpClient);
+  consentRequired = new EventEmitter<string[]>();
 
 
   getGlobus(url: string, key: string) {
@@ -15,7 +16,14 @@ export class GlobusService {
         Authorization: key
       })
     };
-    return this.http.get(url, httpOptions);
+    return this.http.get(url, httpOptions).pipe(
+        catchError(error => {
+          if (error.status === 403 && error.error && error.error.code === 'ConsentRequired') {
+            this.consentRequired.emit(error.error.required_scopes);
+          }
+          return throwError(() => error);
+        })
+    );
   }
 
   putGlobus(url: string, body: string, key: string) {
@@ -56,7 +64,14 @@ export class GlobusService {
       }
 
     };
-    return this.http.post(url, body, httpOptions);
+    return this.http.post(url, body, httpOptions).pipe(
+        catchError(error => {
+          if (error.status === 403 && (error.error && error.error.code === 'ConsentRequired')) {
+            this.consentRequired.emit(error.error.required_scopes);
+          }
+          return throwError(() => error);
+        })
+    );
     // return this.http.post(url,body, httpOptions);
   }
 
