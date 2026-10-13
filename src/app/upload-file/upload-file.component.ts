@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -20,6 +20,7 @@ import {GlobusDirective} from '../globus.directive';
     GlobusDirective
 ],
   templateUrl: './upload-file.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./upload-file.component.css']
 })
 export class UploadFileComponent implements OnInit {

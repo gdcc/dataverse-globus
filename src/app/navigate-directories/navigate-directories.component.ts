@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -27,6 +27,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     NavigateTemplateDownloadComponent
 ],
   templateUrl: './navigate-directories.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./navigate-directories.component.css']
 })
 

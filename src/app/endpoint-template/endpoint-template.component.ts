@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, inject, ChangeDetectionStrategy } from '@angular/core';
 import {TransferData} from '../models/transfer-data';
 import {GlobusService} from '../globus.service';
 import {TranslateModule} from '@ngx-translate/core';
@@ -25,6 +25,7 @@ import {catchError, mergeMap} from 'rxjs/operators';
     MatGridListModule
   ],
   templateUrl: './endpoint-template.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./endpoint-template.component.css']
 })
 export class EndpointTemplateComponent implements OnInit, OnChanges {

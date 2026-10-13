@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import {ConfigService} from '../config.service';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
@@ -32,6 +32,7 @@ import {TransferData} from '../models/transfer-data';
     ReferencedComponent
 ],
   templateUrl: './upload.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./upload.component.css']
 })
 export class UploadComponent implements OnInit {

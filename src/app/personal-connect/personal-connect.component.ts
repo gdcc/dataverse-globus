@@ -1,4 +1,4 @@
-import {Component, Input,  OnChanges, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {TransferData} from '../models/transfer-data';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
@@ -29,6 +29,7 @@ interface SelFilesType {
     EndpointTemplateComponent
   ],
   templateUrl: './personal-connect.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./personal-connect.component.css']
 })
 export class PersonalConnectComponent implements OnChanges, OnInit {

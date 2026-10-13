@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, inject } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import {catchError, mergeMap} from 'rxjs/operators';
 import {Observable, forkJoin, of, throwError} from 'rxjs';
 import {GlobusService} from '../globus.service';
@@ -43,6 +43,7 @@ export interface SelFilesType {
     CdkFixedSizeVirtualScroll
 ],
   templateUrl: './navigate-template.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./navigate-template.component.css']
 })
 export class NavigateTemplateComponent implements OnInit, OnChanges {

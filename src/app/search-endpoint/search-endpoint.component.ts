@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnChanges, OnInit, inject } from '@angular/core';
+import { AfterViewInit, Component, Input, OnChanges, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import {GlobusService} from '../globus.service';
 import {MatTableDataSource as MatTableDataSource} from '@angular/material/table';
 
@@ -34,6 +34,7 @@ export interface PassingDataType {
     MatInputModule
   ],
   templateUrl: './search-endpoint.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./search-endpoint.component.css']
 })
 export class SearchEndpointComponent implements OnInit, AfterViewInit, OnChanges {

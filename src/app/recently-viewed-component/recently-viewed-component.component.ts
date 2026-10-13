@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, inject } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import {GlobusService} from '../globus.service';
 import {TransferData} from '../models/transfer-data';
 import {TranslateModule} from '@ngx-translate/core';
@@ -28,6 +28,7 @@ interface SelFilesType {
     NavigateTemplateComponent
 ],
   templateUrl: './recently-viewed-component.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./recently-viewed-component.component.css']
 })
 export class RecentlyViewedComponentComponent implements OnChanges, OnInit {
