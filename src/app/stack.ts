@@ -8,7 +8,7 @@ interface IStack<T> {
 export class Stack<T> implements IStack<T> {
     private storage: T[] = [];
 
-    constructor(private capacity: number = Infinity) {}
+    constructor(private capacity = Infinity) {}
 
     push(item: T): void {
         if (this.size() === this.capacity) {

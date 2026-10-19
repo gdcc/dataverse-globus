@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
-import {NgForOf, NgIf} from '@angular/common';
+
 import {ReactiveFormsModule} from '@angular/forms';
+import {GlobusDirective} from '../globus.directive';
 
 
 @Component({
@@ -15,11 +16,11 @@ import {ReactiveFormsModule} from '@angular/forms';
     MatToolbarModule,
     MatFormFieldModule,
     MatSelectModule,
-    NgIf,
     ReactiveFormsModule,
-    NgForOf
-  ],
+    GlobusDirective
+],
   templateUrl: './upload-file.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./upload-file.component.css']
 })
 export class UploadFileComponent implements OnInit {

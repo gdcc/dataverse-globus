@@ -1,9 +1,9 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
-import {NgForOf, NgIf} from '@angular/common';
+
 import {ReactiveFormsModule} from '@angular/forms';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {NavigateTemplateComponent} from '../navigate-template/navigate-template.component';
@@ -20,25 +20,22 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     MatToolbarModule,
     MatFormFieldModule,
     MatSelectModule,
-      MatSnackBarModule,
-    NgIf,
+    MatSnackBarModule,
     ReactiveFormsModule,
-    NgForOf,
     MatGridListModule,
     NavigateTemplateComponent,
     NavigateTemplateDownloadComponent
-  ],
+],
   templateUrl: './navigate-directories.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./navigate-directories.component.css']
 })
 
 
 
 export class NavigateDirectoriesComponent implements OnInit {
+  data = inject(MAT_DIALOG_DATA);
 
-  constructor(
-      @Inject(MAT_DIALOG_DATA) public data: any
-  ) { }
 
    selectedEndPoint: any;
 

@@ -1,21 +1,23 @@
 <app-endpoint-template (newItemEvent)="setSelectedEndpoint($event)"
-                       (loadedEvent)="ifLoaded($event)"
-                       [type]="0"
-                       [transferData]="dataTransfer"
-                        [typeOfTab]="1">
+  (loadedEvent)="ifLoaded($event)"
+  [type]="0"
+  [transferData]="dataTransfer"
+  [typeOfTab]="1">
 </app-endpoint-template>
 
-<div class="center" *ngIf="!recentlyViewedExist() && load">
+@if (!recentlyViewedExist() && load) {
+  <div class="center">
     <h3 class="my-translated-paragraph">
-        {{'RECENT.ERROR' | translate}}
+      {{'RECENT.ERROR' | translate}}
     </h3>
-</div>
+  </div>
+}
 
-<ng-container *ngIf="recentlyViewedExist() && load">
-    <app-navigate-template [transferData]="dataTransfer"
-                           [selectedEndPoint]="selectedEndPoint">
-    </app-navigate-template>
-</ng-container>
+@if (recentlyViewedExist() && load) {
+  <app-navigate-template [transferData]="dataTransfer"
+    [selectedEndPoint]="selectedEndPoint">
+  </app-navigate-template>
+}
 
 
 

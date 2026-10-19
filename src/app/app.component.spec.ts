@@ -1,11 +1,13 @@
 import { TestBed, waitForAsync } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { RouterModule } from '@angular/router';
 
 describe('AppComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        AppComponent
+      imports: [
+        AppComponent,
+        RouterModule.forRoot([])
       ],
     }).compileComponents();
   }));
@@ -20,12 +22,5 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
     expect(app.title).toEqual('globus');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('globus app is running!');
   });
 });

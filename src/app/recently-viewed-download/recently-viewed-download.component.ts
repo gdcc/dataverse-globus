@@ -1,10 +1,9 @@
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
-import {TransferData} from '../upload/upload.component';
+import {Component, Input, OnChanges, OnInit, ChangeDetectionStrategy} from '@angular/core';
+import {TransferData} from '../models/transfer-data';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
-import {NgForOf, NgIf} from '@angular/common';
 import {ReactiveFormsModule} from '@angular/forms';
 import {EndpointTemplateComponent} from '../endpoint-template/endpoint-template.component';
 import {NavigateTemplateDownloadComponent} from '../navigate-template-download/navigate-template-download.component';
@@ -17,13 +16,12 @@ import {NavigateTemplateDownloadComponent} from '../navigate-template-download/n
     MatToolbarModule,
     MatFormFieldModule,
     MatSelectModule,
-    NgIf,
     ReactiveFormsModule,
-    NgForOf,
     EndpointTemplateComponent,
     NavigateTemplateDownloadComponent
   ],
   templateUrl: './recently-viewed-download.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./recently-viewed-download.component.css']
 })
 export class RecentlyViewedDownloadComponent implements OnInit, OnChanges {
@@ -34,7 +32,7 @@ export class RecentlyViewedDownloadComponent implements OnInit, OnChanges {
   @Input() type: number;
   load: boolean;
   selectedEndPoint: any;
-  recentlyViewedEndpoints: Array<object>;
+  recentlyViewedEndpoints: any[];
 
 
   ngOnInit(): void {

@@ -5,7 +5,8 @@
         <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
 </div>
-<div class="table" *ngIf=ifExists()>
+@if (ifExists()) {
+<div class="table">
     <table mat-table [dataSource]="dataSource">
 
         <ng-container matColumnDef="display_name">
@@ -45,9 +46,8 @@
 
 
     </table>
-
-
 </div>
+}
 <!--
 <div class="center">
     <mat-form-field  *ngIf="personalConnectExist()" appearance="fill" >

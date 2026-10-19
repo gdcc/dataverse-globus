@@ -1,10 +1,9 @@
-import {Component, Input,  OnChanges, OnInit} from '@angular/core';
-import {TransferData} from '../upload/upload.component';
+import {Component, Input, OnChanges, OnInit, ChangeDetectionStrategy} from '@angular/core';
+import {TransferData} from '../models/transfer-data';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
-import {NgForOf, NgIf} from '@angular/common';
 import {ReactiveFormsModule} from '@angular/forms';
 import {NavigateTemplateComponent} from '../navigate-template/navigate-template.component';
 import {EndpointTemplateComponent} from '../endpoint-template/endpoint-template.component';
@@ -25,13 +24,12 @@ interface SelFilesType {
     MatToolbarModule,
     MatFormFieldModule,
     MatSelectModule,
-    NgIf,
     ReactiveFormsModule,
-    NgForOf,
     NavigateTemplateComponent,
     EndpointTemplateComponent
   ],
   templateUrl: './personal-connect.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./personal-connect.component.css']
 })
 export class PersonalConnectComponent implements OnChanges, OnInit {
@@ -42,7 +40,7 @@ export class PersonalConnectComponent implements OnChanges, OnInit {
   @Input() type: number; // 0 - left, 1 - right, 2 - center
   load: boolean;
   selectedEndPoint: any;
-  personalConnectEndpoints: Array<object>;
+  personalConnectEndpoints: any[];
 
   ngOnInit(): void {
     this.load = false;

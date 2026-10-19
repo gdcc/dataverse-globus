@@ -1,9 +1,9 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, ChangeDetectionStrategy} from '@angular/core';
 import {EndpointTemplateComponent} from '../endpoint-template/endpoint-template.component';
 import {NavigateTemplateComponent} from '../navigate-template/navigate-template.component';
 import {NgIf} from '@angular/common';
 import {TranslateModule} from '@ngx-translate/core';
-import {TransferData} from '../upload/upload.component';
+import {TransferData} from '../models/transfer-data';
 
 @Component({
   selector: 'app-referenced',
@@ -15,6 +15,7 @@ import {TransferData} from '../upload/upload.component';
         TranslateModule
     ],
   templateUrl: './referenced.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './referenced.component.css'
 })
 export class ReferencedComponent {
@@ -22,7 +23,7 @@ export class ReferencedComponent {
     @Input() type: number; // 0 - left, 1 - right, 2 - center
     load: boolean;
     selectedEndPoint: any;
-    referencedEndpoints: Array<object>;
+    referencedEndpoints: any[];
 
     setSelectedEndpoint($event: any) {
         this.selectedEndPoint = $event;
