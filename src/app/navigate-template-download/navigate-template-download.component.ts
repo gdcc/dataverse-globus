@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, inject } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import {GlobusService} from '../globus.service';
 import {TransferData} from '../models/transfer-data';
 import {catchError, mergeMap} from 'rxjs/operators';
@@ -48,6 +48,7 @@ export interface PassingDataSelectType {
     CdkVirtualScrollViewport
 ],
   templateUrl: './navigate-template-download.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./navigate-template-download.component.css']
 })
 export class NavigateTemplateDownloadComponent implements OnInit, OnChanges {

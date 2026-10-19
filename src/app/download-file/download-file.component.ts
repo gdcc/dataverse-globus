@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import {TransferData} from '../models/transfer-data';
 import {ConfigService} from '../config.service';
 import {TranslateModule} from '@ngx-translate/core';
@@ -25,6 +25,7 @@ import {PersonalConnectDownloadComponent} from '../personal-connect-download/per
     PersonalConnectDownloadComponent
 ],
   templateUrl: './download-file.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./download-file.component.css']
 })
 export class DownloadFileComponent implements OnInit {

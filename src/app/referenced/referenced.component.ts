@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, ChangeDetectionStrategy} from '@angular/core';
 import {EndpointTemplateComponent} from '../endpoint-template/endpoint-template.component';
 import {NavigateTemplateComponent} from '../navigate-template/navigate-template.component';
 import {NgIf} from '@angular/common';
@@ -15,6 +15,7 @@ import {TransferData} from '../models/transfer-data';
         TranslateModule
     ],
   templateUrl: './referenced.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './referenced.component.css'
 })
 export class ReferencedComponent {

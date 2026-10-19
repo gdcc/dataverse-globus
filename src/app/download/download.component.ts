@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import {ConfigService} from '../config.service';
 import {TransferData} from '../models/transfer-data';
 import {TranslateModule} from '@ngx-translate/core';
@@ -29,6 +29,7 @@ import {RecentlyViewedDownloadComponent} from '../recently-viewed-download/recen
     RecentlyViewedDownloadComponent
 ],
   templateUrl: './download.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./download.component.css']
 })
 export class DownloadComponent implements OnInit {

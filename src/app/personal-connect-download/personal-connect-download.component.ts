@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {TransferData} from '../models/transfer-data';
 import {TranslateModule} from '@ngx-translate/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
@@ -22,6 +22,7 @@ import {NavigateTemplateDownloadComponent} from '../navigate-template-download/n
     NavigateTemplateDownloadComponent
 ],
   templateUrl: './personal-connect-download.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./personal-connect-download.component.css']
 })
 export class PersonalConnectDownloadComponent implements OnInit, OnChanges {

@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import {APP_INITIALIZER, NgModule} from '@angular/core';
+import {APP_INITIALIZER, NgModule, provideZoneChangeDetection} from '@angular/core';
 
 // import { MatomoModule } from 'ngx-matomo';
 import { ConfigService } from './config.service';
@@ -118,7 +118,7 @@ export function load(http: HttpClient, config: ConfigService): (() => Promise<bo
         RecentlyViewedDownloadComponent,
         DownloadFileComponent,
     ],
-    providers: [GlobusService, {
+    providers: [provideZoneChangeDetection(), GlobusService, {
         provide: APP_INITIALIZER,
         useFactory: load,
         deps: [

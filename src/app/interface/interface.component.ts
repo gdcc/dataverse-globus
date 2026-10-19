@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject, ChangeDetectionStrategy } from '@angular/core';
 import { GlobusService } from '../globus.service';
 import {TranslateModule, TranslateService} from '@ngx-translate/core';
 import {TransferData} from '../models/transfer-data';
@@ -26,6 +26,7 @@ import PKCE from 'js-pkce';
     ReactiveFormsModule
 ],
     templateUrl: './interface.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrls: ['./interface.component.css']
 })
 export class InterfaceComponent implements OnInit {
@@ -97,7 +98,7 @@ export class InterfaceComponent implements OnInit {
         const callback = this.globusService.getParameterByName('callback',null);
         const dvLocale = this.globusService.getParameterByName('dvLocale',null);
 
-        if (typeof callback !== 'undefined' && callback != null) {
+        if (callback) {  // getParameterByName returns '' (not null) when absent
           const code = this.getCode(callback, dvLocale);
         } else {
             this.state = this.globusService.getParameterByName('state',null);

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, inject, ChangeDetectionStrategy } from '@angular/core';
 
 import {GlobusService} from '../globus.service';
 import {mergeMap} from 'rxjs/operators';
@@ -29,6 +29,7 @@ import {MAT_DIALOG_DATA, MatDialogModule} from '@angular/material/dialog';
     MatDialogModule
 ],
   templateUrl: './select-directory.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./select-directory.component.css']
 })
 export class SelectDirectoryComponent implements OnInit {
